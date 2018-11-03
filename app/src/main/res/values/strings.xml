@@ -3,4 +3,5 @@
     <string name="txt_empty_cell">Empty Cell</string>
     <string name="Player1">Player 1</string>
     <string name="Player2">Player 2</string>
+    <string name="title">TIC TAC TOE</string>
 </resources>
