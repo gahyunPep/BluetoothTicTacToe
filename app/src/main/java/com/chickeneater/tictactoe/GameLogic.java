@@ -13,6 +13,11 @@ class GameLogic {
         for (int[] row : cellsArr) {
             Arrays.fill(row, EMPTY);
         }
+
+        //Test purpose only TODO @rokanank delete after @Nithil will finish UI
+        cellsArr[0][0] = CROSS;
+        cellsArr[1][1] = NOUGHT;
+        cellsArr[0][2] = CROSS;
     }
 
     public void setNought(int x, int y) {
