@@ -23,5 +23,17 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         */
+
+
+        /*
+        //When Cross player clicked
+        mLogic.setCross(x, y);
+
+        //When Nought player clicked
+        mLogic.setNought(x, y);
+
+
+        //You need to update UI of a button after that, so it will correspond to mLogic.get();
+         */
     }
 }
