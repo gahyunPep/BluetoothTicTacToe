@@ -12,6 +12,7 @@ import java.util.List;
 public class LobbyActivity extends AppCompatActivity {
     private RecyclerView mDevicesRecyclerView;
     private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +32,8 @@ public class LobbyActivity extends AppCompatActivity {
         You can skip "Add the support library", and "Add RecyclerView to your layout" part
         */
         //Uncomment this lines when you will create DevicesRecyclerViewAdapter class
-        //mAdapter = new DevicesRecyclerViewAdapter(devices);
-        //mDevicesRecyclerView.setAdapter(mAdapter);
+        mAdapter = new DevicesRecyclerViewAdapter(devices);
+        mDevicesRecyclerView.setAdapter(mAdapter);
 
     }
 
