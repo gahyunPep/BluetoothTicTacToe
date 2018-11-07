@@ -32,7 +32,7 @@ class GameLogic {
         }
     }
 
-    public void setEmpty(int x, int y){
+    public void setEmpty(int x, int y) {
         cellsArr[x][y] = EMPTY;
     }
 
@@ -44,12 +44,59 @@ class GameLogic {
         }
     }
 
-
-
     public int get(int x, int y) {
         return cellsArr[x][y];
     }
 
     // method for checking winner public
+    public int getWinner() {
+        if (checkDiagonalsForWin() != EMPTY) return checkDiagonalsForWin();
+        else if (checkRowsForWin() != EMPTY) return checkRowsForWin();
+        else if (checkColsForWin() != EMPTY) return checkColsForWin();
+        else
+            return EMPTY; // if there is winner then it will return CROSS or NOUGHT, if it's not  it will return Empty.
+    }
+
+    //check if the same value
+    public int checkIfSameVal(int a, int b, int c) {
+        if (a != 0 && a == b && b == c) {
+            return a;
+        } else {
+            return 0;
+        }
+    }
+
+    //check rows for win
+    public int checkRowsForWin() {
+        int matchVal = EMPTY;
+        for (int i = 0; i < cellsArr.length; i++) {
+            matchVal = checkIfSameVal(cellsArr[i][0], cellsArr[i][1], cellsArr[i][2]);
+            if (matchVal != EMPTY)
+                return matchVal;
+        }
+        return matchVal;
+    }
+
+    //check cols for win
+    public int checkColsForWin() {
+        int matchVal = EMPTY;
+        for (int i = 0; i < cellsArr[0].length; i++) {
+            matchVal = checkIfSameVal(cellsArr[0][i], cellsArr[1][i], cellsArr[2][i]);
+            if (matchVal != EMPTY)
+                return matchVal;
+        }
+        return matchVal;
+    }
+
+    //check diagonals for win
+    public int checkDiagonalsForWin() {
+        int matchVal1 = checkIfSameVal(cellsArr[0][0], cellsArr[1][1], cellsArr[2][2]);
+        int matchVal2 = checkIfSameVal(cellsArr[0][2], cellsArr[1][1], cellsArr[2][0]);
+        if (matchVal1 != EMPTY) {
+            return matchVal1;
+        } else if (matchVal2 != EMPTY) {
+            return matchVal2;
+        } else return EMPTY;
+    }
 
 }
