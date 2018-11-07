@@ -2,6 +2,8 @@ package com.chickeneater.tictactoe;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity {
@@ -12,14 +14,39 @@ public class MainActivity extends AppCompatActivity {
 
     private ImageView[][] gridImageViews = new ImageView[3][3];
 
+    private boolean activePlayer = true; // True = Player 1, False = Player 2
+    private Button player1MoveIndicator;
+    private Button player2MoveIndicator;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        player1MoveIndicator = findViewById(R.id.player1moveindicator);
+        player2MoveIndicator = findViewById(R.id.player2moveindicator);
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 gridImageViews[i][j] = findViewById(gridImageIds[i][j]);
+                final int x = i;
+                final int y = j;
+                gridImageViews[i][j].setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (activePlayer == true && mLogic.isEmpty(x, y)) {
+                            mLogic.setNought(x, y);
+                            activePlayer = false;
+                            moveIndicatorChange();
+                            drawBoard();
+                        } else {
+                            mLogic.setCross(x, y);
+                            activePlayer = true;
+                            moveIndicatorChange();
+                            drawBoard();
+                        }
+
+                    }
+                });
             }
         }
 
@@ -50,6 +77,25 @@ public class MainActivity extends AppCompatActivity {
                         gridImageViews[x][y].setImageResource(R.drawable.ic_o);
                         break;
                 }
+            }
+        }
+    }
+
+    private void moveIndicatorChange() {
+        if (activePlayer == true) {
+            player1MoveIndicator.setBackgroundColor(getResources().getColor(R.color.colorMoveIndicator));
+            player2MoveIndicator.setBackgroundResource(android.R.drawable.btn_default);
+        } else {
+            player2MoveIndicator.setBackgroundColor(getResources().getColor(R.color.colorMoveIndicator));
+            player1MoveIndicator.setBackgroundResource(android.R.drawable.btn_default);
+        }
+    }
+
+    private void reset() {
+        for (int x = 0; x < 3; x++) {
+            for (int y = 0; y < 3; y++) {
+                mLogic.setEmpty(x, y);
+                drawBoard();
             }
         }
     }

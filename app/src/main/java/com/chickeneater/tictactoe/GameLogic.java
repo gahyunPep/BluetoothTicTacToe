@@ -15,9 +15,9 @@ class GameLogic {
         }
 
         //Test purpose only TODO @rokanank delete after @Nithil will finish UI
-        cellsArr[0][0] = CROSS;
-        cellsArr[1][1] = NOUGHT;
-        cellsArr[0][2] = CROSS;
+//        cellsArr[0][0] = CROSS;
+//        cellsArr[1][1] = NOUGHT;
+//        cellsArr[0][2] = CROSS;
     }
 
     public void setNought(int x, int y) {
@@ -32,6 +32,10 @@ class GameLogic {
         }
     }
 
+    public void setEmpty(int x, int y){
+        cellsArr[x][y] = EMPTY;
+    }
+
     public boolean isEmpty(int x, int y) {
         if (cellsArr[x][y] == EMPTY) {
             return true;
@@ -39,6 +43,8 @@ class GameLogic {
             return false;
         }
     }
+
+
 
     public int get(int x, int y) {
         return cellsArr[x][y];
