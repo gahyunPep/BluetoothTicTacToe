@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private GameLogic mLogic = new GameLogic();
@@ -17,6 +19,9 @@ public class MainActivity extends AppCompatActivity {
     private boolean activePlayer = true; // True = Player 1, False = Player 2
     private Button player1MoveIndicator;
     private Button player2MoveIndicator;
+    private int playerOneWin = 0, playerTwoWin = 0;
+    private TextView player1Score;
+    private TextView player2Score;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         player1MoveIndicator = findViewById(R.id.player1moveindicator);
         player2MoveIndicator = findViewById(R.id.player2moveindicator);
+        player1Score = findViewById(R.id.player1score);
+        player2Score = findViewById(R.id.player2score);
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -45,6 +52,25 @@ public class MainActivity extends AppCompatActivity {
                             drawBoard();
                         }
 
+                        if (mLogic.getWinner() == GameLogic.NOUGHT) {
+                            Toast toastPlayerOne = Toast.makeText(getApplicationContext(),
+                                    "Player 1 Won",
+                                    Toast.LENGTH_LONG);
+                            toastPlayerOne.show();
+                            reset();
+                            playerOneWin++;
+                            player1Score.setText(String.valueOf(playerOneWin));
+                        } else if (mLogic.getWinner() == GameLogic.CROSS) {
+                            Toast toastPlayerTwo = Toast.makeText(getApplicationContext(),
+                                    "Player 2 Won",
+                                    Toast.LENGTH_LONG);
+
+                            toastPlayerTwo.show();
+                            reset();
+                            playerTwoWin++;
+                            player2Score.setText(String.valueOf(playerTwoWin));
+
+                        }
                     }
                 });
             }
