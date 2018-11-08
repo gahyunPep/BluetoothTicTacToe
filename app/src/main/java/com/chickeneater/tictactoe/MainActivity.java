@@ -1,12 +1,13 @@
 package com.chickeneater.tictactoe;
 
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private GameLogic mLogic = new GameLogic();
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private int playerOneWin = 0, playerTwoWin = 0;
     private TextView player1Score;
     private TextView player2Score;
+    private String strPlayerWin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,23 +55,15 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         if (mLogic.getWinner() == GameLogic.NOUGHT) {
-                            Toast toastPlayerOne = Toast.makeText(getApplicationContext(),
-                                    "Player 1 Won",
-                                    Toast.LENGTH_LONG);
-                            toastPlayerOne.show();
-                            reset();
+                            strPlayerWin = "Player 1 Won";
                             playerOneWin++;
                             player1Score.setText(String.valueOf(playerOneWin));
+                            winnerDialog();
                         } else if (mLogic.getWinner() == GameLogic.CROSS) {
-                            Toast toastPlayerTwo = Toast.makeText(getApplicationContext(),
-                                    "Player 2 Won",
-                                    Toast.LENGTH_LONG);
-
-                            toastPlayerTwo.show();
-                            reset();
+                            strPlayerWin = "Player 2 Won";
                             playerTwoWin++;
                             player2Score.setText(String.valueOf(playerTwoWin));
-
+                            winnerDialog();
                         }
                     }
                 });
@@ -124,5 +118,30 @@ public class MainActivity extends AppCompatActivity {
                 drawBoard();
             }
         }
+    }
+
+    private void winnerDialog(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                this);
+
+        alertDialogBuilder.setTitle("Winner");
+
+        alertDialogBuilder
+                .setMessage(strPlayerWin)
+                .setCancelable(false)
+                .setPositiveButton("Play Again",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        reset();
+                    }
+                })
+                .setNegativeButton("Exit",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        MainActivity.this.finish();
+                    }
+                });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        alertDialog.show();
     }
 }
