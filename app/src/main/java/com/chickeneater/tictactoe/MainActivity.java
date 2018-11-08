@@ -1,5 +1,7 @@
 package com.chickeneater.tictactoe;
 
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -65,16 +67,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void showEndGameResult() {
         int winner = mGame.checkWinner();
-        String toastMessage = "It is draw";
+        String winnerMessage = "It is draw";
         switch (winner) {
             case GameLogic.CROSS:
-                toastMessage = "Player 2 Won";
+                winnerMessage = "Player 2 Won";
                 playerTwoWin++;
                 player2Score.setText(String.valueOf(playerTwoWin));
                 break;
 
             case GameLogic.NOUGHT:
-                toastMessage = "Player 1 Won";
+                winnerMessage = "Player 1 Won";
                 playerOneWin++;
                 player1Score.setText(String.valueOf(playerOneWin));
                 break;
@@ -83,8 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 //TODO show Draw
                 break;
         }
-        Toast.makeText(getApplicationContext(), toastMessage, Toast.LENGTH_LONG).show();
-        mGame.startNewGame();
+        winnerDialog(winnerMessage);
     }
 
     private void drawBoard() {
@@ -115,4 +116,30 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    private void winnerDialog(String winnerMessage) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                this);
+
+        alertDialogBuilder.setTitle("Winner");
+
+        alertDialogBuilder
+                .setMessage(winnerMessage)
+                .setCancelable(false)
+                .setPositiveButton("Play Again", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        mGame.startNewGame();
+                        drawBoard();
+                    }
+                })
+                .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        MainActivity.this.finish();
+                    }
+                });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        alertDialog.show();
+    }
 }
