@@ -9,7 +9,7 @@ public class GameLogicUnitTest {
 
     @Test
     public void simpleGameTest() {
-        GameLogic game = new GameLogic();
+        GameModel game = new GameModel();
         game.makeMove(0, 0);
         game.makeMove(0, 1);
         game.makeMove(1, 0);
@@ -22,7 +22,7 @@ public class GameLogicUnitTest {
 
     @Test
     public void checkDrawTest() {
-        GameLogic game = new GameLogic();
+        GameModel game = new GameModel();
         game.makeMove(0, 2);
         game.makeMove(0, 1);
         game.makeMove(1, 0);
@@ -38,14 +38,14 @@ public class GameLogicUnitTest {
 
     @Test
     public void checkCrossIsWinner() {
-        GameLogic game = new GameLogic();
+        GameModel game = new GameModel();
         game.makeMove(0, 0);
         game.makeMove(0, 1);
         game.makeMove(1, 0);
         game.makeMove(0, 2);
         game.makeMove(2, 0);
 
-        assertEquals(GameLogic.CROSS, game.checkWinner());
+        assertEquals(GameModel.CROSS, game.getWinner());
     }
 
 

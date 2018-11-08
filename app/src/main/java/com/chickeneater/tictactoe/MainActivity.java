@@ -8,10 +8,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-    private GameLogic mGame = new GameLogic();
+    private GameModel mGame = new GameModel();
     private int[][] gridImageIds = {{R.id.position_0_0, R.id.position_0_1, R.id.position_0_2},
             {R.id.position_1_0, R.id.position_1_1, R.id.position_1_2},
             {R.id.position_2_0, R.id.position_2_1, R.id.position_2_2}};
@@ -66,22 +65,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showEndGameResult() {
-        int winner = mGame.checkWinner();
+        int winner = mGame.getWinner();
         String winnerMessage = "It is draw";
         switch (winner) {
-            case GameLogic.CROSS:
+            case GameModel.CROSS:
                 winnerMessage = "Player 2 Won";
                 playerTwoWin++;
                 player2Score.setText(String.valueOf(playerTwoWin));
                 break;
 
-            case GameLogic.NOUGHT:
+            case GameModel.NOUGHT:
                 winnerMessage = "Player 1 Won";
                 playerOneWin++;
                 player1Score.setText(String.valueOf(playerOneWin));
                 break;
 
-            case GameLogic.DRAW:
+            case GameModel.DRAW:
                 //TODO show Draw
                 break;
         }
@@ -92,13 +91,13 @@ public class MainActivity extends AppCompatActivity {
         for (int x = 0; x < 3; x++) {
             for (int y = 0; y < 3; y++) {
                 switch (mGame.get(x, y)) {
-                    case GameLogic.EMPTY:
+                    case GameModel.EMPTY:
                         gridImageViews[x][y].setImageDrawable(null);
                         break;
-                    case GameLogic.CROSS:
+                    case GameModel.CROSS:
                         gridImageViews[x][y].setImageResource(R.drawable.ic_x);
                         break;
-                    case GameLogic.NOUGHT:
+                    case GameModel.NOUGHT:
                         gridImageViews[x][y].setImageResource(R.drawable.ic_o);
                         break;
                 }
@@ -128,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .setPositiveButton("Play Again", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mGame.startNewGame();
+                        mGame = new GameModel();
                         drawBoard();
                     }
                 })
