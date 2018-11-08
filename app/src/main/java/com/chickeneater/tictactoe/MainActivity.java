@@ -9,8 +9,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
-    private GameModel mGame = new GameModel();
+public class MainActivity extends AppCompatActivity implements GameModel.OnGameEventListener {
+    private GameModel mGame;
     private int[][] gridImageIds = {{R.id.position_0_0, R.id.position_0_1, R.id.position_0_2},
             {R.id.position_1_0, R.id.position_1_1, R.id.position_1_2},
             {R.id.position_2_0, R.id.position_2_1, R.id.position_2_2}};
@@ -46,7 +46,41 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        startGame();
+    }
+
+    private void startGame() {
+        mGame = new GameModel();
+        mGame.setOnGameEventListener(this);
         drawBoard();
+    }
+
+    @Override
+    public void onMoveMade() {
+        moveIndicatorChange();
+        drawBoard();
+    }
+
+    @Override
+    public void onPlayerWon(int winner) {
+        switch (winner) {
+            case GameModel.CROSS:
+                playerTwoWin++;
+                player2Score.setText(String.valueOf(playerTwoWin));
+                winnerDialog("Player 2 Won");
+                break;
+
+            case GameModel.NOUGHT:
+                playerOneWin++;
+                player1Score.setText(String.valueOf(playerOneWin));
+                winnerDialog("Player 1 Won");
+                break;
+        }
+    }
+
+    @Override
+    public void onDraw() {
+        winnerDialog("It is draw");
     }
 
     private void makeMovement(int x, int y) {
@@ -55,36 +89,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         mGame.makeMove(x, y);
-
-        if (mGame.isEnded()) {
-            showEndGameResult();
-        }
-
-        moveIndicatorChange();
-        drawBoard();
-    }
-
-    private void showEndGameResult() {
-        int winner = mGame.getWinner();
-        String winnerMessage = "It is draw";
-        switch (winner) {
-            case GameModel.CROSS:
-                winnerMessage = "Player 2 Won";
-                playerTwoWin++;
-                player2Score.setText(String.valueOf(playerTwoWin));
-                break;
-
-            case GameModel.NOUGHT:
-                winnerMessage = "Player 1 Won";
-                playerOneWin++;
-                player1Score.setText(String.valueOf(playerOneWin));
-                break;
-
-            case GameModel.DRAW:
-                //TODO show Draw
-                break;
-        }
-        winnerDialog(winnerMessage);
     }
 
     private void drawBoard() {
@@ -127,8 +131,7 @@ public class MainActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .setPositiveButton("Play Again", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mGame = new GameModel();
-                        drawBoard();
+                        startGame();
                     }
                 })
                 .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
