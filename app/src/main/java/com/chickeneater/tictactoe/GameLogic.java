@@ -6,37 +6,54 @@ class GameLogic {
     public static final int EMPTY = 0;
     public static final int NOUGHT = 1;
     public static final int CROSS = 2;
+    public static final int DRAW = EMPTY;
 
     private int cellsArr[][] = new int[3][3];
 
-    public GameLogic() {
-        for (int[] row : cellsArr) {
-            Arrays.fill(row, EMPTY);
-        }
+    private int activePlayer;
 
-        //Test purpose only TODO @rokanank delete after @Nithil will finish UI
-//        cellsArr[0][0] = CROSS;
-//        cellsArr[1][1] = NOUGHT;
-//        cellsArr[0][2] = CROSS;
+    public GameLogic() {
+        startNewGame();
     }
 
-    public void setNought(int x, int y) {
-        if (isEmpty(x, y)) {
+    public void makeMove(int x, int y) {
+        if (activePlayer == CROSS) {
+            setCross(x, y);
+            activePlayer = NOUGHT;
+        } else {
+            setNought(x, y);
+            activePlayer = CROSS;
+        }
+    }
+
+    public boolean isCurrentPlayerCross() {
+        if (activePlayer == CROSS) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void setNought(int x, int y) {
+        if (isCellEmpty(x, y)) {
             cellsArr[x][y] = NOUGHT;
         }
     }
 
-    public void setCross(int x, int y) {
-        if (isEmpty(x, y)) {
+    private void setCross(int x, int y) {
+        if (isCellEmpty(x, y)) {
             cellsArr[x][y] = CROSS;
         }
     }
 
-    public void setEmpty(int x, int y) {
-        cellsArr[x][y] = EMPTY;
+    public void startNewGame() {
+        for (int[] row : cellsArr) {
+            Arrays.fill(row, EMPTY);
+        }
+        activePlayer = CROSS;
     }
 
-    public boolean isEmpty(int x, int y) {
+    public boolean isCellEmpty(int x, int y) {
         if (cellsArr[x][y] == EMPTY) {
             return true;
         } else {
@@ -49,7 +66,7 @@ class GameLogic {
     }
 
     // method for checking winner public
-    public int getWinner() {
+    public int checkWinner() {
         if (checkDiagonalsForWin() != EMPTY) return checkDiagonalsForWin();
         else if (checkRowsForWin() != EMPTY) return checkRowsForWin();
         else if (checkColsForWin() != EMPTY) return checkColsForWin();
@@ -57,6 +74,23 @@ class GameLogic {
             return EMPTY; // if there is winner then it will return CROSS or NOUGHT, if it's not  it will return Empty.
     }
 
+    public boolean isDraw() {
+        //check if the board is full
+        boolean isBoardFull = true;
+        for (int[] rows : cellsArr) {
+            for (int cell : rows) {
+                if (cell == 0) isBoardFull = false;
+            }
+        }
+        //check if it's Draw!
+        if (isBoardFull == true && checkWinner() == EMPTY) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /*Sub Methods for checkWinner() methods*/
     //check if the same value
     public int checkIfSameVal(int a, int b, int c) {
         if (a != 0 && a == b && b == c) {
@@ -99,4 +133,8 @@ class GameLogic {
         } else return EMPTY;
     }
 
+    public boolean isEnded() {
+        if (checkWinner() != 0 || isDraw()) return true;
+        return false;
+    }
 }
