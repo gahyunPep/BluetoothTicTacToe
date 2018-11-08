@@ -1,5 +1,7 @@
 package com.chickeneater.tictactoe;
 
+import android.support.annotation.Nullable;
+
 import java.util.Arrays;
 
 class GameModel {
@@ -11,6 +13,8 @@ class GameModel {
     private int cellsArr[][] = new int[3][3];
     private int winner = EMPTY;
     private int activePlayer = CROSS;
+    @Nullable
+    private OnGameEventListener onGameEventListener;
 
     public GameModel() {
         for (int[] row : cellsArr) {
@@ -28,6 +32,18 @@ class GameModel {
         }
 
         winner = assignWinner(x, y);
+        if (onGameEventListener == null) {
+            return;
+        }
+
+        if (winner != EMPTY){
+            onGameEventListener.onPlayerWon(winner);
+        } else if (isDraw()) {
+            onGameEventListener.onDraw();
+        } else {
+            onGameEventListener.onMoveMade();
+        }
+
     }
 
     public boolean isCurrentPlayerCross() {
@@ -81,14 +97,6 @@ class GameModel {
         return EMPTY;
     }
 
-    public int getWinner() {
-        return winner;
-    }
-
-    public boolean isEnded() {
-        return winner != EMPTY || isDraw();
-    }
-
     private boolean isDraw() {
         //check if the board is full
         for (int[] rows : cellsArr) {
@@ -126,5 +134,16 @@ class GameModel {
 
     private int checkSubDiagonal() {
         return checkIfSameVal(cellsArr[0][2], cellsArr[1][1], cellsArr[2][0]);
+    }
+
+    public interface OnGameEventListener{
+
+        void onMoveMade(); //call this after each move
+        void onPlayerWon(int winner); //call this after someone won and who's the winner
+        void onDraw();
+    }
+
+    public void setOnGameEventListener(OnGameEventListener onGameEventListener){
+        this.onGameEventListener = onGameEventListener;
     }
 }
