@@ -1,5 +1,6 @@
 package com.chickeneater.tictactoe;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -38,6 +39,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
     @Override
     public void OnDeviceSelected(DeviceInList deviceList) {
         Toast.makeText(this,deviceList.getName()+"  "+deviceList.getAddress(),Toast.LENGTH_LONG).show();
+        startActivity(new Intent(LobbyActivity.this, MainActivity.class));
     }
 
     //This function will be replaced with BluetoothConnector call. @Gahyun Do not change it
