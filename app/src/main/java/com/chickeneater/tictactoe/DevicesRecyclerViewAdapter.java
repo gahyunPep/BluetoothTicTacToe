@@ -1,19 +1,17 @@
 package com.chickeneater.tictactoe;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DevicesRecyclerViewAdapter extends RecyclerView.Adapter<DevicesRecyclerViewAdapter.ViewHolder>{
-    private List<LobbyActivity.DeviceInList> devices  = new ArrayList<>();
+    private List<LobbyActivity.DeviceInList> devices;
+    private OnDeviceSelectedListener onDeviceSelectedListener;
 
     public DevicesRecyclerViewAdapter(List<LobbyActivity.DeviceInList> devices) {
         this.devices = devices;
@@ -30,7 +28,16 @@ public class DevicesRecyclerViewAdapter extends RecyclerView.Adapter<DevicesRecy
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
         //get elements
-        viewHolder.phoneName.setText(devices.get(position).getName());
+        final LobbyActivity.DeviceInList device = devices.get(position);
+
+        viewHolder.deviceName.setText(device.getName());
+        viewHolder.deviceAddress.setText(device.getAddress());
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onDeviceSelectedListener.OnDeviceSelected(device);
+            }
+        });
     }
 
     @Override
@@ -39,12 +46,19 @@ public class DevicesRecyclerViewAdapter extends RecyclerView.Adapter<DevicesRecy
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        TextView phoneName;
-        RelativeLayout parentLayout;
+        TextView deviceName, deviceAddress;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            phoneName = itemView.findViewById(R.id.phoneNameView);
-            parentLayout = itemView.findViewById(R.id.parent_layout);
+            deviceName = itemView.findViewById(R.id.deviceNameView);
+            deviceAddress = itemView.findViewById(R.id.deviceAddressView);
         }
+    }
+
+    public interface OnDeviceSelectedListener{
+        void OnDeviceSelected(LobbyActivity.DeviceInList deviceList);
+    }
+
+    public void setOnDeviceSelectedListener(OnDeviceSelectedListener onDeviceSelectedListener){
+        this.onDeviceSelectedListener = onDeviceSelectedListener;
     }
 }

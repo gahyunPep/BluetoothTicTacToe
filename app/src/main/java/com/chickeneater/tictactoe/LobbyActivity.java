@@ -5,14 +5,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LobbyActivity extends AppCompatActivity {
+public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerViewAdapter.OnDeviceSelectedListener {
     private RecyclerView mDevicesRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private DevicesRecyclerViewAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,8 +20,6 @@ public class LobbyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lobby);
 
         mDevicesRecyclerView = findViewById(R.id.devicesRecyclerView);
-        mDevicesRecyclerView.setAdapter(mAdapter);
-
         getDevices();
     }
 
@@ -34,7 +32,12 @@ public class LobbyActivity extends AppCompatActivity {
         //Uncomment this lines when you will create DevicesRecyclerViewAdapter class
         mAdapter = new DevicesRecyclerViewAdapter(devices);
         mDevicesRecyclerView.setAdapter(mAdapter);
+        mAdapter.setOnDeviceSelectedListener(this);
+    }
 
+    @Override
+    public void OnDeviceSelected(DeviceInList deviceList) {
+        Toast.makeText(this,deviceList.getName()+"  "+deviceList.getAddress(),Toast.LENGTH_LONG).show();
     }
 
     //This function will be replaced with BluetoothConnector call. @Gahyun Do not change it
@@ -72,4 +75,7 @@ public class LobbyActivity extends AppCompatActivity {
             return mAddress;
         }
     }
+
+    //method clicks and gets phone name and address and return it
+
 }
