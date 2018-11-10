@@ -138,7 +138,7 @@
         android:background="@drawable/img_view_border"
         app:layout_constraintStart_toEndOf="@+id/txtView_Player1"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_o" />
+        app:srcCompat="@drawable/ic_x" />
 
     <ImageView
         android:id="@+id/player2Symbol"
@@ -149,7 +149,7 @@
         android:background="@drawable/img_view_border"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_x" />
+        app:srcCompat="@drawable/ic_o" />
 
     <TextView
         android:id="@+id/player1score"

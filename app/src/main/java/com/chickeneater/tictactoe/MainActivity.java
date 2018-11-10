@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements GameModel.OnGameE
     private void startGame() {
         mGame = new GameModel();
         mGame.setOnGameEventListener(this);
+        moveIndicatorChange();
         drawBoard();
     }
 
@@ -63,25 +64,28 @@ public class MainActivity extends AppCompatActivity implements GameModel.OnGameE
 
     @Override
     public void onPlayerWon(int winner) {
+        drawBoard();
         switch (winner) {
             case GameModel.CROSS:
                 playerTwoWin++;
-                player2Score.setText(String.valueOf(playerTwoWin));
-                winnerDialog("Player 2 Won");
+                player1Score.setText(String.valueOf(playerTwoWin));
+                winnerDialog("Player 1 Won");
                 break;
 
             case GameModel.NOUGHT:
                 playerOneWin++;
-                player1Score.setText(String.valueOf(playerOneWin));
-                winnerDialog("Player 1 Won");
+                player2Score.setText(String.valueOf(playerOneWin));
+                winnerDialog("Player 2 Won");
                 break;
         }
     }
 
     @Override
     public void onDraw() {
-        winnerDialog("It is draw");
+        drawBoard();
+        winnerDialog("It is a draw");
     }
+
 
     private void makeMovement(int x, int y) {
         if (!mGame.isCellEmpty(x, y)) {
@@ -111,11 +115,11 @@ public class MainActivity extends AppCompatActivity implements GameModel.OnGameE
 
     private void moveIndicatorChange() {
         if (mGame.isCurrentPlayerCross()) {
-            player1MoveIndicator.setBackgroundColor(getResources().getColor(R.color.colorMoveIndicator));
-            player2MoveIndicator.setBackgroundResource(android.R.drawable.btn_default);
-        } else {
             player2MoveIndicator.setBackgroundColor(getResources().getColor(R.color.colorMoveIndicator));
             player1MoveIndicator.setBackgroundResource(android.R.drawable.btn_default);
+        } else {
+            player1MoveIndicator.setBackgroundColor(getResources().getColor(R.color.colorMoveIndicator));
+            player2MoveIndicator.setBackgroundResource(android.R.drawable.btn_default);
         }
     }
 
@@ -124,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements GameModel.OnGameE
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 this);
 
-        alertDialogBuilder.setTitle("Winner");
+        alertDialogBuilder.setTitle("Result");
 
         alertDialogBuilder
                 .setMessage(winnerMessage)
