@@ -3,25 +3,30 @@ package com.chickeneater.tictactoe;
 import android.content.DialogInterface;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class GameActivity extends AppCompatActivity implements GameModel.OnGameEventListener {
-    private GameModel mGame;
+import java.util.List;
+
+public class GameActivity extends AppCompatActivity {
+    private GameViewModel gameViewModel;
+    private int playerOneWin = 0, playerTwoWin = 0;
+
     private int[][] gridImageIds = {{R.id.position_0_0, R.id.position_0_1, R.id.position_0_2},
             {R.id.position_1_0, R.id.position_1_1, R.id.position_1_2},
             {R.id.position_2_0, R.id.position_2_1, R.id.position_2_2}};
 
     private ImageView[][] gridImageViews = new ImageView[3][3];
 
-
-
     private Button player1MoveIndicator;
     private Button player2MoveIndicator;
-    private int playerOneWin = 0, playerTwoWin = 0;
+
     private TextView player1Score;
     private TextView player2Score;
 
@@ -29,6 +34,7 @@ public class GameActivity extends AppCompatActivity implements GameModel.OnGameE
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        gameViewModel = ViewModelProviders.of(this).get(GameViewModel.class);
         player1MoveIndicator = findViewById(R.id.player1moveindicator);
         player2MoveIndicator = findViewById(R.id.player2moveindicator);
         player1Score = findViewById(R.id.player1score);
@@ -42,31 +48,25 @@ public class GameActivity extends AppCompatActivity implements GameModel.OnGameE
                 gridImageViews[i][j].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        makeMovement(x, y);
+                        onCellClicked(x, y);
                     }
                 });
             }
         }
 
-        startGame();
+        gameViewModel.getCellsListoflists().observe(this, new Observer<List<List<Integer>>>() {
+            @Override
+            public void onChanged(List<List<Integer>> board) {
+                displayBoard(board);
+                moveIndicatorChange();
+            }
+        });
     }
 
-    private void startGame() {
-        mGame = new GameModel();
-        mGame.setOnGameEventListener(this);
-        moveIndicatorChange();
-        drawBoard();
-    }
 
-    @Override
-    public void onMoveMade() {
-        moveIndicatorChange();
-        drawBoard();
-    }
 
-    @Override
     public void onPlayerWon(int winner) {
-        drawBoard();
+        //displayBoard(lists);
         switch (winner) {
             case GameModel.CROSS:
                 playerTwoWin++;
@@ -82,25 +82,20 @@ public class GameActivity extends AppCompatActivity implements GameModel.OnGameE
         }
     }
 
-    @Override
     public void onDraw() {
-        drawBoard();
+        //displayBoard(lists);
         winnerDialog("It is a draw");
     }
 
 
-    private void makeMovement(int x, int y) {
-        if (!mGame.isCellEmpty(x, y)) {
-            return;
-        }
-
-        mGame.makeMove(x, y);
+    private void onCellClicked(int x, int y) {
+        gameViewModel.makeMove(x, y);
     }
 
-    private void drawBoard() {
+    private void displayBoard(List<List<Integer>> lists) {
         for (int x = 0; x < 3; x++) {
             for (int y = 0; y < 3; y++) {
-                switch (mGame.get(x, y)) {
+                switch (lists.get(x).get(y)) {
                     case GameModel.EMPTY:
                         gridImageViews[x][y].setImageDrawable(null);
                         break;
@@ -116,13 +111,14 @@ public class GameActivity extends AppCompatActivity implements GameModel.OnGameE
     }
 
     private void moveIndicatorChange() {
-        if (mGame.isCurrentPlayerCross()) {
+        if (gameViewModel.isCurrentPlayerCross()) {
             player2MoveIndicator.setBackgroundColor(getResources().getColor(R.color.colorMoveIndicator));
             player1MoveIndicator.setBackgroundResource(android.R.drawable.btn_default);
         } else {
             player1MoveIndicator.setBackgroundColor(getResources().getColor(R.color.colorMoveIndicator));
             player2MoveIndicator.setBackgroundResource(android.R.drawable.btn_default);
         }
+
     }
 
 
@@ -137,7 +133,7 @@ public class GameActivity extends AppCompatActivity implements GameModel.OnGameE
                 .setCancelable(false)
                 .setPositiveButton("Play Again", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        startGame();
+                        gameViewModel.startGame();
                     }
                 })
                 .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
