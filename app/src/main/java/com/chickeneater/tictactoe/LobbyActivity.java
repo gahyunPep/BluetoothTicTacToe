@@ -39,7 +39,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
     @Override
     public void OnDeviceSelected(DeviceInList deviceList) {
         Toast.makeText(this,deviceList.getName()+"  "+deviceList.getAddress(),Toast.LENGTH_LONG).show();
-        startActivity(new Intent(LobbyActivity.this, MainActivity.class));
+        startActivity(new Intent(LobbyActivity.this, GameActivity.class));
     }
 
     //This function will be replaced with BluetoothConnector call. @Gahyun Do not change it

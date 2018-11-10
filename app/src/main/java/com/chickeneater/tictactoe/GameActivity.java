@@ -9,13 +9,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements GameModel.OnGameEventListener {
+public class GameActivity extends AppCompatActivity implements GameModel.OnGameEventListener {
     private GameModel mGame;
     private int[][] gridImageIds = {{R.id.position_0_0, R.id.position_0_1, R.id.position_0_2},
             {R.id.position_1_0, R.id.position_1_1, R.id.position_1_2},
             {R.id.position_2_0, R.id.position_2_1, R.id.position_2_2}};
 
     private ImageView[][] gridImageViews = new ImageView[3][3];
+
+
 
     private Button player1MoveIndicator;
     private Button player2MoveIndicator;
@@ -26,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements GameModel.OnGameE
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_game);
         player1MoveIndicator = findViewById(R.id.player1moveindicator);
         player2MoveIndicator = findViewById(R.id.player2moveindicator);
         player1Score = findViewById(R.id.player1score);
@@ -140,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements GameModel.OnGameE
                 })
                 .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        MainActivity.this.finish();
+                        GameActivity.this.finish();
                     }
                 });
 
