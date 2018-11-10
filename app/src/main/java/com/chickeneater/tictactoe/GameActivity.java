@@ -15,6 +15,7 @@ import android.widget.TextView;
 import java.util.List;
 
 public class GameActivity extends AppCompatActivity {
+    public static final String DEVICE_ID = "device_id";
     private GameViewModel gameViewModel;
     private int playerOneWin = 0, playerTwoWin = 0;
 

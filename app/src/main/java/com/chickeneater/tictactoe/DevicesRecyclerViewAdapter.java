@@ -1,34 +1,35 @@
 package com.chickeneater.tictactoe;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.List;
+import com.chickeneater.tictactoe.core.data.DeviceInList;
 
-public class DevicesRecyclerViewAdapter extends RecyclerView.Adapter<DevicesRecyclerViewAdapter.ViewHolder>{
-    private List<LobbyActivity.DeviceInList> devices;
+
+public class DevicesRecyclerViewAdapter extends ListAdapter<DeviceInList, DevicesRecyclerViewAdapter.ViewHolder> {
     private OnDeviceSelectedListener onDeviceSelectedListener;
 
-    public DevicesRecyclerViewAdapter(List<LobbyActivity.DeviceInList> devices) {
-        this.devices = devices;
+    public DevicesRecyclerViewAdapter(@NonNull DiffUtil.ItemCallback<DeviceInList> diffCallback) {
+        super(diffCallback);
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_listitem, parent, false);
-        ViewHolder holder = new ViewHolder(view);
-        return holder;
+        return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
         //get elements
-        final LobbyActivity.DeviceInList device = devices.get(position);
+        final DeviceInList device = getItem(position);
 
         viewHolder.deviceName.setText(device.getName());
         viewHolder.deviceAddress.setText(device.getAddress());
@@ -40,14 +41,9 @@ public class DevicesRecyclerViewAdapter extends RecyclerView.Adapter<DevicesRecy
         });
     }
 
-    @Override
-    public int getItemCount() {
-        return devices.size();
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder{
         TextView deviceName, deviceAddress;
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             deviceName = itemView.findViewById(R.id.deviceNameView);
             deviceAddress = itemView.findViewById(R.id.deviceAddressView);
@@ -55,7 +51,7 @@ public class DevicesRecyclerViewAdapter extends RecyclerView.Adapter<DevicesRecy
     }
 
     public interface OnDeviceSelectedListener{
-        void OnDeviceSelected(LobbyActivity.DeviceInList deviceList);
+        void OnDeviceSelected(DeviceInList deviceList);
     }
 
     public void setOnDeviceSelectedListener(OnDeviceSelectedListener onDeviceSelectedListener){

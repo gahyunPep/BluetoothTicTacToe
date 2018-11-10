@@ -22,7 +22,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LobbyActivity"></activity>
+
+        <activity android:name=".lobby.LobbyActivity">
+        </activity>
         <activity android:name=".StatsActivity"></activity>
     </application>
 
