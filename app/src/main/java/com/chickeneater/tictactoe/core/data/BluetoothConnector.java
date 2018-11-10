@@ -1,8 +1,5 @@
 package com.chickeneater.tictactoe.core.data;
 
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -14,72 +11,57 @@ import android.content.IntentFilter;
 import android.util.Log;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.UUID;
+
+import androidx.annotation.NonNull;
 
 
 /**
  * Created by romanlee on 11/3/18.
  * To the power of Love
  */
-public class BluetoothConnector implements LifecycleObserver {
+public class BluetoothConnector {
     private static final String NAME = "AppNameWillBeHere";
-    private static final UUID MY_UUID = UUID.fromString(NAME);
+    private static final UUID MY_UUID = UUID.randomUUID();
     private static final String TAG = BluetoothConnector.class.getName();
-    private WeakReference<Context> mContextWeakReference;
-    private Lifecycle mLifecycle;
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-    private OnDeviceDiscoveredListener mDiscoveredListener;
+    private class BluetoothDiscoveryBroadcastReceiver extends BroadcastReceiver {
+        @NonNull
+        private BluetoothDiscoveryListener mDiscoveredListener;
 
-    // TODO Handle location permission
-    // Create a BroadcastReceiver for ACTION_FOUND.
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        public BluetoothDiscoveryBroadcastReceiver(@NonNull BluetoothDiscoveryListener discoveredListener) {
+            mDiscoveredListener = discoveredListener;
+        }
+
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
-                //discovery starts, we can show progress dialog or perform other tasks
-                String s = "";
+                //discovery starts
+                mDiscoveredListener.onDiscoveryStart();
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                //discovery finishes, dismiss progress dialog
-                String s = "";
+                //discovery finishes
+                mDiscoveredListener.onDiscoveryFinished();
+                context.unregisterReceiver(this);
             } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                // Discovery has found a device. Get the BluetoothDevice
-                // object and its info from the Intent.
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if (mDiscoveredListener != null) {
-                    mDiscoveredListener.onDeviceDiscovered(device);
-                }
-
-                String deviceName = device.getName();
-                String deviceHardwareAddress = device.getAddress(); // MAC address
+                mDiscoveredListener.onDeviceDiscovered(device);
             }
         }
-    };
+    }
 
+    public void stopDiscovery() {
+        mBluetoothAdapter.cancelDiscovery();
+    }
 
-    public BluetoothConnector(Context context, Lifecycle lifecycle, OnDeviceDiscoveredListener listener) {
-        mContextWeakReference = new WeakReference<>(context);
-        mDiscoveredListener = listener;
-        mLifecycle = lifecycle;
+    public void discoverDevices(Context context, BluetoothDiscoveryListener listener) {
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothDevice.ACTION_FOUND);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        context.registerReceiver(mReceiver, filter);
-    }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    public void onDestroy() {
-        Context context;
-        if ((context = mContextWeakReference.get()) != null) {
-            context.unregisterReceiver(mReceiver);
-        }
-        mDiscoveredListener = null;
-    }
+        context.registerReceiver(new BluetoothDiscoveryBroadcastReceiver(listener), filter);
 
-
-    public void discoverDevices() {
         mBluetoothAdapter.startDiscovery();
     }
 
@@ -190,7 +172,9 @@ public class BluetoothConnector implements LifecycleObserver {
     }
 
 
-    public interface OnDeviceDiscoveredListener {
+    public interface BluetoothDiscoveryListener {
+        void onDiscoveryStart();
+        void onDiscoveryFinished();
         void onDeviceDiscovered(BluetoothDevice bluetoothDevice);
     }
 }

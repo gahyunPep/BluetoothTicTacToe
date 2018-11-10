@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".LobbyActivity">
+        <activity android:name=".lobby.LobbyActivity">
         </activity>
     </application>
 

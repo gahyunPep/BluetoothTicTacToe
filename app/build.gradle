@@ -28,7 +28,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
 
     //Lifecycle component
-    implementation "androidx.lifecycle:lifecycle-runtime:2.0.0"
+    implementation "androidx.lifecycle:lifecycle-extensions:2.0.0"
     annotationProcessor "androidx.lifecycle:lifecycle-compiler:2.0.0"
 
     testImplementation 'junit:junit:4.12'

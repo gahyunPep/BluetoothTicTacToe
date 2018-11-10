@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.chickeneater.tictactoe.lobby.LobbyActivity;
+
 public class HomeScreenActivity extends AppCompatActivity {
 
     Button startButton;
