@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class GameActivity extends AppCompatActivity implements GameModel.OnGameEventListener {
+    public static final String DEVICE_ID = "device_id";
+
     private GameModel mGame;
     private int[][] gridImageIds = {{R.id.position_0_0, R.id.position_0_1, R.id.position_0_2},
             {R.id.position_1_0, R.id.position_1_1, R.id.position_1_2},

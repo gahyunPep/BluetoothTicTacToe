@@ -8,9 +8,9 @@ import com.chickeneater.tictactoe.core.data.DeviceInList;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -27,7 +27,7 @@ public class LobbyViewModel extends ViewModel implements BluetoothConnector.Blue
 
     private MutableLiveData<Boolean> isDiscovering = new MutableLiveData<>();
 
-    private Map<String, BluetoothDevice> mDevicesMap = new HashMap<>();
+    private Set<BluetoothDevice> mDevicesSet = new HashSet<>();
     private List<BluetoothDevice> mBluetoothDevices = new ArrayList<>();
 
     private MutableLiveData<List<DeviceInList>> mDevicesData = new MutableLiveData<>();
@@ -68,16 +68,18 @@ public class LobbyViewModel extends ViewModel implements BluetoothConnector.Blue
 
     @Override
     public void onDeviceDiscovered(BluetoothDevice bluetoothDevice) {
-        //If device is already in our map do nothing
-        if (mDevicesMap.containsKey(bluetoothDevice.getAddress())) {
-            return;
+        //Try to add device into a set if can update LiveData
+        if (mDevicesSet.add(bluetoothDevice)) {
+            mBluetoothDevices.add(bluetoothDevice);
+            mDevicesData.setValue(map(mBluetoothDevices));
         }
-
-        mDevicesMap.put(bluetoothDevice.getAddress(), bluetoothDevice);
-        mBluetoothDevices.add(bluetoothDevice);
-        mDevicesData.setValue(map(mBluetoothDevices));
     }
 
+    /**
+     * Translate list of bluetooth devices to DeviceList objects, because UI doesn't have to know what they are
+     * @param devices Bluetooth devices list
+     * @return list of DeviceInList
+     */
     private List<DeviceInList> map(List<BluetoothDevice> devices) {
         List<DeviceInList> retVal = new ArrayList<>(devices.size());
         for (BluetoothDevice device : devices) {
@@ -89,7 +91,6 @@ public class LobbyViewModel extends ViewModel implements BluetoothConnector.Blue
     }
 
     public void connectToDevice(DeviceInList device) {
-        BluetoothDevice bluetoothDevice = mDevicesMap.get(device.getAddress());
         //TODO connection
     }
 

@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.chickeneater.tictactoe.DevicesDifUtils;
 import com.chickeneater.tictactoe.DevicesRecyclerViewAdapter;
+import com.chickeneater.tictactoe.GameActivity;
 import com.chickeneater.tictactoe.R;
 import com.chickeneater.tictactoe.core.data.DeviceInList;
 
@@ -70,7 +71,10 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
     private void connectToDevice(DeviceInList device) {
         mViewModel.connectToDevice(device);
         Toast.makeText(this, device.getName() + "  " + device.getAddress(), Toast.LENGTH_LONG).show();
-        //startActivity(new Intent(LobbyActivity.this, MainActivity.class));
+        Intent intent = new Intent(LobbyActivity.this, GameActivity.class);
+        intent.putExtra(GameActivity.DEVICE_ID, device.getAddress());
+
+        startActivity(intent);
     }
 
     private void becameDiscoverable() {
