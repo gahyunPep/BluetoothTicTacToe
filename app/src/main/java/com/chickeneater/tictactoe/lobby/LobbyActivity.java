@@ -1,10 +1,14 @@
 package com.chickeneater.tictactoe.lobby;
 
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chickeneater.tictactoe.DevicesDifUtils;
@@ -16,6 +20,7 @@ import com.chickeneater.tictactoe.core.data.DeviceInList;
 
 import java.util.List;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -28,6 +33,11 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
 
     private LobbyViewModel mViewModel;
     private Button rescanBtn;
+    private ProgressBar rescanProgressBar;
+    private TextView scanTxt;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +56,16 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
             @Override
             public void onChanged(Boolean isSearching) {
                 //TODO show progress indicator visible if true, not visible if false
+                rescanProgressBar = findViewById(R.id.rescanProgressbar);
+                TextView scanTxt = findViewById(R.id.scantextView);
                 if(isSearching){
                     rescanBtn.setVisibility(View.INVISIBLE);
-                    startActivity(new Intent(LobbyActivity.this, StatsActivity.class));
+                    rescanProgressBar.setVisibility(View.VISIBLE);
+                    scanTxt.setVisibility(View.VISIBLE);
                 }else{
                     rescanBtn.setVisibility(View.VISIBLE);
+                    rescanProgressBar.setVisibility(View.INVISIBLE);
+                    scanTxt.setVisibility(View.INVISIBLE);
                 }
             }
         });
@@ -70,6 +85,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
             }
         });
     }
+
 
     private void restartScan() {
         becameDiscoverable();
