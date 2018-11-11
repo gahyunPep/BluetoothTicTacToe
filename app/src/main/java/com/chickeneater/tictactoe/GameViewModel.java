@@ -10,18 +10,34 @@ import androidx.lifecycle.ViewModel;
 public class GameViewModel extends ViewModel implements GameModel.OnGameEventListener {
 
     private GameModel mGame;
+    public static final int DRAW = 3;
     private MutableLiveData<List<List<Integer>>> cellsListoflists = new MutableLiveData<>();
+    private MutableLiveData<Integer> winnerState = new MutableLiveData<>();
+    private MutableLiveData<Integer> player1Score = new MutableLiveData<>();
+    private MutableLiveData<Integer> player2Score = new MutableLiveData<>();
     private int playerOneWin = 0, playerTwoWin = 0;
 
     public GameViewModel() {
        startGame();
+       player1Score.setValue(playerOneWin);
+       player2Score.setValue(playerTwoWin);
+    }
+
+    public MutableLiveData<Integer> getPlayer1Score() {
+        return player1Score;
+    }
+
+    public MutableLiveData<Integer> getPlayer2Score() {
+        return player2Score;
     }
 
     public LiveData<List<List<Integer>>> getCellsListoflists() {
-
         return cellsListoflists;
     }
 
+    public LiveData<Integer> getWinnerState() {
+        return winnerState;
+    }
 
     @Override
     public void onMoveMade() {
@@ -40,11 +56,21 @@ public class GameViewModel extends ViewModel implements GameModel.OnGameEventLis
     @Override
     public void onPlayerWon(int winner) {
 
+        switch (winner){
+            case GameModel.CROSS:
+                player1Score.setValue(++playerOneWin);
+                break;
+            case GameModel.NOUGHT:
+                player2Score.setValue(++playerTwoWin);
+                break;
+        }
+        winnerState.setValue(winner);
+
     }
 
     @Override
     public void onDraw() {
-
+        winnerState.setValue(DRAW);
     }
 
     public void makeMove(int x, int y) {

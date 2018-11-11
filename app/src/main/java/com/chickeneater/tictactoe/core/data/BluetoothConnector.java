@@ -45,24 +45,36 @@ public class BluetoothConnector {
                 context.unregisterReceiver(this);
             } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                mDiscoveredListener.onDeviceDiscovered(device);
+                mDiscoveredListener.onDeviceDiscovered(new DeviceInList(device.getName(), device.getAddress()));
             }
         }
     }
 
     public void stopDiscovery() {
-        mBluetoothAdapter.cancelDiscovery();
+        if (mBluetoothAdapter != null) {
+            mBluetoothAdapter.cancelDiscovery();
+        }
     }
 
     public void discoverDevices(Context context, BluetoothDiscoveryListener listener) {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BluetoothDevice.ACTION_FOUND);
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        if (mBluetoothAdapter != null) {
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(BluetoothDevice.ACTION_FOUND);
+            filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+            filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
 
-        context.registerReceiver(new BluetoothDiscoveryBroadcastReceiver(listener), filter);
+            context.registerReceiver(new BluetoothDiscoveryBroadcastReceiver(listener), filter);
 
-        mBluetoothAdapter.startDiscovery();
+
+            mBluetoothAdapter.startDiscovery();
+        } else {
+            //Mock data TODO replace with an error
+            listener.onDeviceDiscovered(new DeviceInList("Phone 1", "123123"));
+            listener.onDeviceDiscovered(new DeviceInList("Phone 2", "123123"));
+            listener.onDeviceDiscovered(new DeviceInList("Phone 3", "123123"));
+            listener.onDeviceDiscovered(new DeviceInList("Phone 4", "123123"));
+            listener.onDeviceDiscovered(new DeviceInList("Phone 5", "123123"));
+        }
     }
 
     private class AcceptThread extends Thread {
@@ -98,7 +110,8 @@ public class BluetoothConnector {
                     manageMyConnectedSocket(socket);
                     try {
                         mmServerSocket.close();
-                    } catch (IOException ignored) {}
+                    } catch (IOException ignored) {
+                    }
                     break;
                 }
             }
@@ -174,8 +187,10 @@ public class BluetoothConnector {
 
     public interface BluetoothDiscoveryListener {
         void onDiscoveryStart();
+
         void onDiscoveryFinished();
-        void onDeviceDiscovered(BluetoothDevice bluetoothDevice);
+
+        void onDeviceDiscovered(DeviceInList bluetoothDevice);
     }
 }
 

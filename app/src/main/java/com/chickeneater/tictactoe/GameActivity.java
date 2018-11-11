@@ -17,7 +17,6 @@ import java.util.List;
 public class GameActivity extends AppCompatActivity {
     public static final String DEVICE_ID = "device_id";
     private GameViewModel gameViewModel;
-    private int playerOneWin = 0, playerTwoWin = 0;
 
     private int[][] gridImageIds = {{R.id.position_0_0, R.id.position_0_1, R.id.position_0_2},
             {R.id.position_1_0, R.id.position_1_1, R.id.position_1_2},
@@ -62,32 +61,47 @@ public class GameActivity extends AppCompatActivity {
                 moveIndicatorChange();
             }
         });
+
+        gameViewModel.getWinnerState().observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer winner) {
+                onPlayerWon(winner);
+            }
+        });
+
+        gameViewModel.getPlayer1Score().observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer integer) {
+                player1Score.setText(String.valueOf(integer));
+            }
+        });
+
+        gameViewModel.getPlayer2Score().observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer integer) {
+                player2Score.setText(String.valueOf(integer));
+            }
+        });
     }
 
 
 
     public void onPlayerWon(int winner) {
-        //displayBoard(lists);
+
         switch (winner) {
             case GameModel.CROSS:
-                playerTwoWin++;
-                player1Score.setText(String.valueOf(playerTwoWin));
+
                 winnerDialog("Player 1 Won");
                 break;
 
             case GameModel.NOUGHT:
-                playerOneWin++;
-                player2Score.setText(String.valueOf(playerOneWin));
                 winnerDialog("Player 2 Won");
+                break;
+            case GameViewModel.DRAW:
+                winnerDialog("It is a draw");
                 break;
         }
     }
-
-    public void onDraw() {
-        //displayBoard(lists);
-        winnerDialog("It is a draw");
-    }
-
 
     private void onCellClicked(int x, int y) {
         gameViewModel.makeMove(x, y);

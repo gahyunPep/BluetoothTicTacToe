@@ -1,13 +1,11 @@
 package com.chickeneater.tictactoe.lobby;
 
-import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 
 import com.chickeneater.tictactoe.core.data.BluetoothConnector;
 import com.chickeneater.tictactoe.core.data.DeviceInList;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,8 +25,8 @@ public class LobbyViewModel extends ViewModel implements BluetoothConnector.Blue
 
     private MutableLiveData<Boolean> isDiscovering = new MutableLiveData<>();
 
-    private Set<BluetoothDevice> mDevicesSet = new HashSet<>();
-    private List<BluetoothDevice> mBluetoothDevices = new ArrayList<>();
+    private Set<DeviceInList> mDevicesSet = new HashSet<>();
+    private List<DeviceInList> mBluetoothDevices = new ArrayList<>();
 
     private MutableLiveData<List<DeviceInList>> mDevicesData = new MutableLiveData<>();
 
@@ -67,27 +65,12 @@ public class LobbyViewModel extends ViewModel implements BluetoothConnector.Blue
     }
 
     @Override
-    public void onDeviceDiscovered(BluetoothDevice bluetoothDevice) {
+    public void onDeviceDiscovered(DeviceInList bluetoothDevice) {
         //Try to add device into a set if can update LiveData
         if (mDevicesSet.add(bluetoothDevice)) {
             mBluetoothDevices.add(bluetoothDevice);
-            mDevicesData.setValue(map(mBluetoothDevices));
+            mDevicesData.setValue(mBluetoothDevices);
         }
-    }
-
-    /**
-     * Translate list of bluetooth devices to DeviceList objects, because UI doesn't have to know what they are
-     * @param devices Bluetooth devices list
-     * @return list of DeviceInList
-     */
-    private List<DeviceInList> map(List<BluetoothDevice> devices) {
-        List<DeviceInList> retVal = new ArrayList<>(devices.size());
-        for (BluetoothDevice device : devices) {
-            retVal.add(new DeviceInList(device.getName(), device.getAddress()));
-        }
-
-        Collections.sort(retVal);
-        return retVal;
     }
 
     public void connectToDevice(DeviceInList device) {
