@@ -8,10 +8,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import java.io.IOException;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 
@@ -68,12 +71,30 @@ public class BluetoothConnector {
 
             mBluetoothAdapter.startDiscovery();
         } else {
-            //Mock data TODO replace with an error
-            listener.onDeviceDiscovered(new DeviceInList("Phone 1", "123123"));
-            listener.onDeviceDiscovered(new DeviceInList("Phone 2", "123123"));
-            listener.onDeviceDiscovered(new DeviceInList("Phone 3", "123123"));
-            listener.onDeviceDiscovered(new DeviceInList("Phone 4", "123123"));
-            listener.onDeviceDiscovered(new DeviceInList("Phone 5", "123123"));
+            final BluetoothDiscoveryListener listenerFinal = listener;
+            listener.onDiscoveryStart();
+            final Handler handler = new Handler(Looper.getMainLooper());
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(TimeUnit.SECONDS.toMillis(5));
+                    } catch (InterruptedException e) {}
+                    //Mock data TODO replace with an error
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listenerFinal.onDeviceDiscovered(new DeviceInList("Phone 1", "123123"));
+                            listenerFinal.onDeviceDiscovered(new DeviceInList("Phone 2", "123123"));
+                            listenerFinal.onDeviceDiscovered(new DeviceInList("Phone 3", "123123"));
+                            listenerFinal.onDeviceDiscovered(new DeviceInList("Phone 4", "123123"));
+                            listenerFinal.onDeviceDiscovered(new DeviceInList("Phone 5", "123123"));
+                            listenerFinal.onDiscoveryFinished();
+                        }
+                    });
+                }
+            }).start();
+
         }
     }
 
