@@ -3,12 +3,15 @@ package com.chickeneater.tictactoe.lobby;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.chickeneater.tictactoe.DevicesDifUtils;
 import com.chickeneater.tictactoe.DevicesRecyclerViewAdapter;
 import com.chickeneater.tictactoe.GameActivity;
 import com.chickeneater.tictactoe.R;
+import com.chickeneater.tictactoe.StatsActivity;
 import com.chickeneater.tictactoe.core.data.DeviceInList;
 
 import java.util.List;
@@ -24,6 +27,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
     private static final int DISCOVERABILITY_TIME = 20;
 
     private LobbyViewModel mViewModel;
+    private Button rescanBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +44,14 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
 
         mViewModel.getIsDiscovering().observe(this, new Observer<Boolean>() {
             @Override
-            public void onChanged(Boolean aBoolean) {
+            public void onChanged(Boolean isSearching) {
                 //TODO show progress indicator visible if true, not visible if false
+                if(isSearching){
+                    rescanBtn.setVisibility(View.INVISIBLE);
+                    startActivity(new Intent(LobbyActivity.this, StatsActivity.class));
+                }else{
+                    rescanBtn.setVisibility(View.VISIBLE);
+                }
             }
         });
 
@@ -49,6 +59,14 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
             @Override
             public void onChanged(List<DeviceInList> deviceInLists) {
                 displayDevices(deviceInLists);
+            }
+        });
+
+        rescanBtn = findViewById(R.id.rescanBtn);
+        rescanBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                restartScan();
             }
         });
     }
