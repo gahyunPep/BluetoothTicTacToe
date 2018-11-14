@@ -20,6 +20,7 @@ public class TickTackBluetoothService {
 
     public interface OnBluetoothConnectionServiceListener {
         void onConnectedTo(String deviceName);
+        void onConnectionFailed();
     }
 
     public interface OnMessageReceivedListener {
@@ -271,6 +272,9 @@ public class TickTackBluetoothService {
      * Indicate that the connection attempt failed and notify the UI Activity.
      */
     void connectionFailed() {
+        for (OnBluetoothConnectionServiceListener listener : mConnectionServiceListeners) {
+            listener.onConnectionFailed();
+        }
         // Send a failure message back to the Activity
         /*
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);

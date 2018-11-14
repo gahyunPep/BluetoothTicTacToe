@@ -35,6 +35,7 @@ public class LobbyViewModel extends ViewModel implements BluetoothDiscoveryServi
     private MutableLiveData<List<DeviceInList>> mDevicesData = new MutableLiveData<>();
 
     private MutableLiveData<Event<String>> mDeviceConnectedEvent = new MutableLiveData<>();
+    private MutableLiveData<Event<Void>> mDeviceConnectionFailed = new MutableLiveData<>();
 
     private LobbyViewModel(Context context) {
         mDiscoveryService = new BluetoothDiscoveryService();
@@ -54,6 +55,10 @@ public class LobbyViewModel extends ViewModel implements BluetoothDiscoveryServi
 
     public LiveData<Event<String>> getDeviceConnectedEvent() {
         return mDeviceConnectedEvent;
+    }
+
+    public MutableLiveData<Event<Void>> getDeviceConnectionFailed() {
+        return mDeviceConnectionFailed;
     }
 
     public void restartDiscovery(Context context) {
@@ -95,6 +100,11 @@ public class LobbyViewModel extends ViewModel implements BluetoothDiscoveryServi
     @Override
     public void onConnectedTo(String deviceName) {
         mDeviceConnectedEvent.setValue(new Event<>(deviceName));
+    }
+
+    @Override
+    public void onConnectionFailed() {
+        mDeviceConnectionFailed.setValue(new Event<Void>(null));
     }
 
     public static class Factory implements ViewModelProvider.Factory {

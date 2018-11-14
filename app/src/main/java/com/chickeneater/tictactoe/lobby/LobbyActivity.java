@@ -82,6 +82,14 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
                 startActivity(intent);
             }
         });
+
+        mViewModel.getDeviceConnectionFailed().observe(this, new EventObserver<Void>() {
+
+            @Override
+            public void onEventHappened(Void value) {
+                //TODO @Gahuyn show message that connection failed and give user opportunity to click again
+            }
+        });
     }
 
     private void restartScan() {
@@ -101,6 +109,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
 
     //method clicks and gets phone name and address and return it
     private void connectToDevice(DeviceInList device) {
+        //TODO Gahyun show progress bar, and restrict user from clicking again
         mViewModel.connectToDevice(device);
     }
 
