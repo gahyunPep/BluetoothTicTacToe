@@ -1,6 +1,4 @@
-package com.chickeneater.tictactoe;
-
-import com.chickeneater.tictactoe.core.data.DeviceInList;
+package com.chickeneater.tictactoe.lobby;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;

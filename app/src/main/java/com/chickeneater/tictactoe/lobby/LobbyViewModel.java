@@ -2,10 +2,12 @@ package com.chickeneater.tictactoe.lobby;
 
 import android.content.Context;
 
-import com.chickeneater.tictactoe.core.data.BluetoothConnector;
-import com.chickeneater.tictactoe.core.data.DeviceInList;
+import com.chickeneater.tictactoe.core.data.BluetoothDiscoveryService;
+import com.chickeneater.tictactoe.core.data.TickTackBluetoothService;
+import com.chickeneater.tictactoe.core.ui.Event;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,8 +22,10 @@ import androidx.lifecycle.ViewModelProvider;
  * Created by romanlee on 11/10/18.
  * To the power of Love
  */
-public class LobbyViewModel extends ViewModel implements BluetoothConnector.BluetoothDiscoveryListener {
-    private BluetoothConnector mConnector;
+public class LobbyViewModel extends ViewModel implements BluetoothDiscoveryService.BluetoothDiscoveryListener,
+        TickTackBluetoothService.OnBluetoothConnectionServiceListener {
+    private BluetoothDiscoveryService mDiscoveryService;
+    private TickTackBluetoothService mBluetoothService;
 
     private MutableLiveData<Boolean> isDiscovering = new MutableLiveData<>();
 
@@ -30,9 +34,13 @@ public class LobbyViewModel extends ViewModel implements BluetoothConnector.Blue
 
     private MutableLiveData<List<DeviceInList>> mDevicesData = new MutableLiveData<>();
 
+    private MutableLiveData<Event<String>> mDeviceConnectedEvent = new MutableLiveData<>();
+
     private LobbyViewModel(Context context) {
-        mConnector = new BluetoothConnector();
-        mConnector.discoverDevices(context, this);
+        mDiscoveryService = new BluetoothDiscoveryService();
+        mDiscoveryService.discoverDevices(context, this);
+        mBluetoothService = TickTackBluetoothService.getInstance();
+        mBluetoothService.addConnectionListener(this);
     }
 
     public LiveData<Boolean> getIsDiscovering() {
@@ -43,15 +51,20 @@ public class LobbyViewModel extends ViewModel implements BluetoothConnector.Blue
         return mDevicesData;
     }
 
+    public LiveData<Event<String>> getDeviceConnectedEvent() {
+        return mDeviceConnectedEvent;
+    }
+
     public void restartDiscovery(Context context) {
-        mConnector.stopDiscovery();
-        mConnector.discoverDevices(context, this);
+        mDiscoveryService.stopDiscovery();
+        mDiscoveryService.discoverDevices(context, this);
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
-        mConnector.stopDiscovery();
+        mBluetoothService.removeConnectionListener(this);
+        mDiscoveryService.stopDiscovery();
     }
 
     @Override
@@ -69,12 +82,19 @@ public class LobbyViewModel extends ViewModel implements BluetoothConnector.Blue
         //Try to add device into a set if can update LiveData
         if (mDevicesSet.add(bluetoothDevice)) {
             mBluetoothDevices.add(bluetoothDevice);
+            Collections.sort(mBluetoothDevices);
             mDevicesData.setValue(mBluetoothDevices);
         }
     }
 
     public void connectToDevice(DeviceInList device) {
-        //TODO connection
+        mBluetoothService.start();
+        mBluetoothService.connect(device.getAddress());
+    }
+
+    @Override
+    public void onConnectedTo(String deviceName) {
+        mDeviceConnectedEvent.setValue(new Event<>(deviceName));
     }
 
     public static class Factory implements ViewModelProvider.Factory {

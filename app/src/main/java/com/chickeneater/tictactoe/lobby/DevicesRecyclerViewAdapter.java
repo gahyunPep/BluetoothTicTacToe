@@ -1,4 +1,4 @@
-package com.chickeneater.tictactoe;
+package com.chickeneater.tictactoe.lobby;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.chickeneater.tictactoe.core.data.DeviceInList;
+import com.chickeneater.tictactoe.R;
 
 
 public class DevicesRecyclerViewAdapter extends ListAdapter<DeviceInList, DevicesRecyclerViewAdapter.ViewHolder> {

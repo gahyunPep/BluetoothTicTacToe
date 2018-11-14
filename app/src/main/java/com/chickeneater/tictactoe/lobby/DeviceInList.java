@@ -1,4 +1,4 @@
-package com.chickeneater.tictactoe.core.data;
+package com.chickeneater.tictactoe.lobby;
 
 import java.util.Objects;
 

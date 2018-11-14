@@ -1,26 +1,19 @@
 package com.chickeneater.tictactoe.lobby;
 
-import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.chickeneater.tictactoe.DevicesDifUtils;
-import com.chickeneater.tictactoe.DevicesRecyclerViewAdapter;
 import com.chickeneater.tictactoe.GameActivity;
 import com.chickeneater.tictactoe.R;
-import com.chickeneater.tictactoe.StatsActivity;
-import com.chickeneater.tictactoe.core.data.DeviceInList;
+import com.chickeneater.tictactoe.core.ui.EventObserver;
 
 import java.util.List;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -35,18 +28,18 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
     private Button rescanBtn;
     private ProgressBar rescanProgressBar;
     private TextView scanTxt;
-
-
-
+    private RecyclerView mDevicesRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lobby);
-        RecyclerView devicesRecyclerView = findViewById(R.id.devicesRecyclerView);
+        rescanProgressBar = findViewById(R.id.rescanProgressbar);
+        scanTxt = findViewById(R.id.scantextView);
+        mDevicesRecyclerView = findViewById(R.id.devicesRecyclerView);
         mAdapter = new DevicesRecyclerViewAdapter(new DevicesDifUtils());
         mAdapter.setOnDeviceSelectedListener(this);
-        devicesRecyclerView.setAdapter(mAdapter);
+        mDevicesRecyclerView.setAdapter(mAdapter);
         if (savedInstanceState == null) { //Avoid running it on screen rotation
             becameDiscoverable();
         }
@@ -55,9 +48,6 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
         mViewModel.getIsDiscovering().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isSearching) {
-                //TODO show progress indicator visible if true, not visible if false
-                rescanProgressBar = findViewById(R.id.rescanProgressbar);
-                TextView scanTxt = findViewById(R.id.scantextView);
                 if(isSearching){
                     rescanBtn.setVisibility(View.INVISIBLE);
                     rescanProgressBar.setVisibility(View.VISIBLE);
@@ -84,8 +74,15 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
                 restartScan();
             }
         });
-    }
 
+        mViewModel.getDeviceConnectedEvent().observe(this, new EventObserver<String>() {
+            @Override
+            public void onEventHappened(String value) {
+                Intent intent = new Intent(LobbyActivity.this, GameActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
 
     private void restartScan() {
         becameDiscoverable();
@@ -94,6 +91,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
 
     private void displayDevices(List<DeviceInList> devices) {
         mAdapter.submitList(devices);
+        mDevicesRecyclerView.scrollToPosition(0);
     }
 
     @Override
@@ -104,11 +102,6 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
     //method clicks and gets phone name and address and return it
     private void connectToDevice(DeviceInList device) {
         mViewModel.connectToDevice(device);
-        Toast.makeText(this, device.getName() + "  " + device.getAddress(), Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(LobbyActivity.this, GameActivity.class);
-        intent.putExtra(GameActivity.DEVICE_ID, device.getAddress());
-
-        startActivity(intent);
     }
 
     private void becameDiscoverable() {
