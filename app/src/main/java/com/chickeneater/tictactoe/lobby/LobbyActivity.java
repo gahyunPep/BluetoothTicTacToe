@@ -1,12 +1,17 @@
 package com.chickeneater.tictactoe.lobby;
 
+import android.Manifest;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chickeneater.tictactoe.GameActivity;
 import com.chickeneater.tictactoe.R;
@@ -14,7 +19,11 @@ import com.chickeneater.tictactoe.core.ui.EventObserver;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,7 +32,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerViewAdapter.OnDeviceSelectedListener {
     private DevicesRecyclerViewAdapter mAdapter;
     private static final int DISCOVERABILITY_TIME = 20;
-
+    private static final int PERMISSION_REQUEST_LOCATION = 303;
     private LobbyViewModel mViewModel;
     private Button rescanBtn;
     private ProgressBar rescanProgressBar;
@@ -32,6 +41,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        requestLocationPermission(); //TODO @Mr.Lee sometimes bluetooth permission pops up earlier than location permission HELP ME
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lobby);
         rescanProgressBar = findViewById(R.id.rescanProgressbar);
@@ -40,6 +50,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
         mAdapter = new DevicesRecyclerViewAdapter(new DevicesDifUtils());
         mAdapter.setOnDeviceSelectedListener(this);
         mDevicesRecyclerView.setAdapter(mAdapter);
+
         if (savedInstanceState == null) { //Avoid running it on screen rotation
             becameDiscoverable();
         }
@@ -48,11 +59,11 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
         mViewModel.getIsDiscovering().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isSearching) {
-                if(isSearching){
+                if (isSearching) {
                     rescanBtn.setVisibility(View.INVISIBLE);
                     rescanProgressBar.setVisibility(View.VISIBLE);
                     scanTxt.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     rescanBtn.setVisibility(View.VISIBLE);
                     rescanProgressBar.setVisibility(View.INVISIBLE);
                     scanTxt.setVisibility(View.INVISIBLE);
@@ -119,4 +130,27 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, DISCOVERABILITY_TIME);
         startActivity(discoverableIntent);
     }
+
+    private void requestLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+           ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                   PERMISSION_REQUEST_LOCATION);
+        } else {
+            Toast.makeText(this, "Already has permission", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_LOCATION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Just got the permission", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 }
