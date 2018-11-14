@@ -26,7 +26,6 @@ public class TickTackBluetoothService {
         void onMessageReceived(String message);
     }
 
-
     private static  TickTackBluetoothService sInstance;
 
     public static TickTackBluetoothService getInstance() {
@@ -42,7 +41,6 @@ public class TickTackBluetoothService {
 
     private static final String TAG = TickTackBluetoothService.class.getName();
 
-    private AcceptThread mSecureAcceptThread;
     private AcceptThread mInsecureAcceptThread;
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
@@ -68,6 +66,7 @@ public class TickTackBluetoothService {
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
                     String deviceName = msg.getData().getString(Constants.DEVICE_NAME);
+                    boolean isHost = msg.getData().getBoolean(Constants.IS_HOST);
                     for (OnBluetoothConnectionServiceListener listener : mConnectionServiceListeners) {
                         listener.onConnectedTo(deviceName);
                     }
@@ -78,7 +77,9 @@ public class TickTackBluetoothService {
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
-                    String s = "";
+                    for (OnMessageReceivedListener listener : mOnMessageReceivedListeners) {
+                        listener.onMessageReceived(readMessage);
+                    }
                     break;
             }
         }
@@ -126,10 +127,6 @@ public class TickTackBluetoothService {
         }
 
         // Start the thread to listen on a BluetoothServerSocket
-        if (mSecureAcceptThread == null) {
-            mSecureAcceptThread = new AcceptThread(this);
-            mSecureAcceptThread.start();
-        }
         if (mInsecureAcceptThread == null) {
             mInsecureAcceptThread = new AcceptThread(this);
             mInsecureAcceptThread.start();
@@ -176,7 +173,7 @@ public class TickTackBluetoothService {
      * @param device The BluetoothDevice that has been connected
      */
     synchronized void connected(BluetoothSocket socket, BluetoothDevice
-            device) {
+            device, boolean isHost) {
         Log.d(TAG, "connected");
 
         // Cancel the thread that completed the connection
@@ -191,11 +188,6 @@ public class TickTackBluetoothService {
             mConnectedThread = null;
         }
 
-        // Cancel the accept thread because we only want to connect to one device
-        if (mSecureAcceptThread != null) {
-            mSecureAcceptThread.cancel();
-            mSecureAcceptThread = null;
-        }
         if (mInsecureAcceptThread != null) {
             mInsecureAcceptThread.cancel();
             mInsecureAcceptThread = null;
@@ -210,6 +202,7 @@ public class TickTackBluetoothService {
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_DEVICE_NAME);
         Bundle bundle = new Bundle();
         bundle.putString(Constants.DEVICE_NAME, device.getName());
+        bundle.putBoolean(Constants.IS_HOST, isHost);
         msg.setData(bundle);
         mHandler.sendMessage(msg);
 
@@ -230,11 +223,6 @@ public class TickTackBluetoothService {
         if (mConnectedThread != null) {
             mConnectedThread.cancel();
             mConnectedThread = null;
-        }
-
-        if (mSecureAcceptThread != null) {
-            mSecureAcceptThread.cancel();
-            mSecureAcceptThread = null;
         }
 
         if (mInsecureAcceptThread != null) {

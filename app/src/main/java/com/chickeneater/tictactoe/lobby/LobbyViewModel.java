@@ -41,6 +41,7 @@ public class LobbyViewModel extends ViewModel implements BluetoothDiscoveryServi
         mDiscoveryService.discoverDevices(context, this);
         mBluetoothService = TickTackBluetoothService.getInstance();
         mBluetoothService.addConnectionListener(this);
+        mBluetoothService.start();
     }
 
     public LiveData<Boolean> getIsDiscovering() {
@@ -88,7 +89,6 @@ public class LobbyViewModel extends ViewModel implements BluetoothDiscoveryServi
     }
 
     public void connectToDevice(DeviceInList device) {
-        mBluetoothService.start();
         mBluetoothService.connect(device.getAddress());
     }
 

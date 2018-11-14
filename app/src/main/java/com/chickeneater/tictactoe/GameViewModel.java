@@ -1,5 +1,7 @@
 package com.chickeneater.tictactoe;
 
+import com.chickeneater.tictactoe.core.data.TickTackBluetoothService;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +9,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class GameViewModel extends ViewModel implements GameModel.OnGameEventListener {
+public class GameViewModel extends ViewModel implements GameModel.OnGameEventListener, TickTackBluetoothService.OnMessageReceivedListener {
 
     private GameModel mGame;
     public static final int DRAW = 3;
@@ -16,11 +18,18 @@ public class GameViewModel extends ViewModel implements GameModel.OnGameEventLis
     private MutableLiveData<Integer> player1Score = new MutableLiveData<>();
     private MutableLiveData<Integer> player2Score = new MutableLiveData<>();
     private int playerOneWin = 0, playerTwoWin = 0;
+    private TickTackBluetoothService mBluetoothService = TickTackBluetoothService.getInstance();
 
     public GameViewModel() {
        startGame();
        player1Score.setValue(playerOneWin);
        player2Score.setValue(playerTwoWin);
+       mBluetoothService.addMessageReceivedListener(this);
+    }
+
+    @Override
+    protected void onCleared() {
+        mBluetoothService.removeMessageReceivedListener(this);
     }
 
     public MutableLiveData<Integer> getPlayer1Score() {
@@ -79,7 +88,7 @@ public class GameViewModel extends ViewModel implements GameModel.OnGameEventLis
         }
 
         mGame.makeMove(x, y);
-
+        mBluetoothService.write(x + " " + y);
     }
 
     public boolean isCurrentPlayerCross() {
@@ -99,5 +108,13 @@ public class GameViewModel extends ViewModel implements GameModel.OnGameEventLis
         }
 
         cellsListoflists.setValue(initialBoard);
+    }
+
+    @Override
+    public void onMessageReceived(String message) {
+        String[] messageXY = message.split(" ");
+        int x = Integer.parseInt(messageXY[0]);
+        int y = Integer.parseInt(messageXY[1]);
+        mGame.makeMove(x, y);
     }
 }

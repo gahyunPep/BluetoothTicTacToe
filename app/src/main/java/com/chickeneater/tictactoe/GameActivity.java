@@ -107,7 +107,6 @@ public class GameActivity extends AppCompatActivity {
 
     private void onCellClicked(int x, int y) {
         gameViewModel.makeMove(x, y);
-        mBluetoothService.write(x + " " + y);
     }
 
     private void displayBoard(List<List<Integer>> lists) {
