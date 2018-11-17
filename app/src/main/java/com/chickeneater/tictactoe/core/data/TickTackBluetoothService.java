@@ -42,7 +42,7 @@ public class TickTackBluetoothService {
 
     private static final String TAG = TickTackBluetoothService.class.getName();
 
-    private AcceptThread mInsecureAcceptThread;
+    private AcceptThread mSecureAcceptThread;
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
 
@@ -128,9 +128,9 @@ public class TickTackBluetoothService {
         }
 
         // Start the thread to listen on a BluetoothServerSocket
-        if (mInsecureAcceptThread == null) {
-            mInsecureAcceptThread = new AcceptThread(this);
-            mInsecureAcceptThread.start();
+        if (mSecureAcceptThread == null) {
+            mSecureAcceptThread = new AcceptThread(this);
+            mSecureAcceptThread.start();
         }
         // Update UI title
         //updateUserInterfaceTitle();
@@ -189,9 +189,9 @@ public class TickTackBluetoothService {
             mConnectedThread = null;
         }
 
-        if (mInsecureAcceptThread != null) {
-            mInsecureAcceptThread.cancel();
-            mInsecureAcceptThread = null;
+        if (mSecureAcceptThread != null) {
+            mSecureAcceptThread.cancel();
+            mSecureAcceptThread = null;
         }
 
         // Start the thread to manage the connection and perform transmissions
@@ -206,8 +206,6 @@ public class TickTackBluetoothService {
         bundle.putBoolean(Constants.IS_HOST, isHost);
         msg.setData(bundle);
         mHandler.sendMessage(msg);
-
-        // Update UI title
     }
 
     /**
@@ -226,12 +224,11 @@ public class TickTackBluetoothService {
             mConnectedThread = null;
         }
 
-        if (mInsecureAcceptThread != null) {
-            mInsecureAcceptThread.cancel();
-            mInsecureAcceptThread = null;
+        if (mSecureAcceptThread != null) {
+            mSecureAcceptThread.cancel();
+            mSecureAcceptThread = null;
         }
         mState = STATE_NONE;
-        // Update UI title
     }
 
     /**

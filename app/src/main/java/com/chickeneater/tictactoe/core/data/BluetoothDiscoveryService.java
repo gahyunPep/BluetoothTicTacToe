@@ -62,30 +62,34 @@ public class BluetoothDiscoveryService {
 
             mBluetoothAdapter.startDiscovery();
         } else {
-            final BluetoothDiscoveryListener listenerFinal = listener;
-            listener.onDiscoveryStart();
-            final Handler handler = new Handler(Looper.getMainLooper());
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(TimeUnit.SECONDS.toMillis(5));
-                    } catch (InterruptedException ignored) {}
-                    //Mock data TODO replace with an error
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listenerFinal.onDeviceDiscovered(new DeviceInList("Phone 1", "123123"));
-                            listenerFinal.onDeviceDiscovered(new DeviceInList("Phone 2", "123123"));
-                            listenerFinal.onDeviceDiscovered(new DeviceInList("Phone 3", "123123"));
-                            listenerFinal.onDeviceDiscovered(new DeviceInList("Phone 4", "123123"));
-                            listenerFinal.onDeviceDiscovered(new DeviceInList("Phone 5", "123123"));
-                            listenerFinal.onDiscoveryFinished();
-                        }
-                    });
-                }
-            }).start();
+            fakeDevices(listener);
         }
+    }
+
+    private void fakeDevices(BluetoothDiscoveryListener listener) {
+        final BluetoothDiscoveryListener listenerFinal = listener;
+        listener.onDiscoveryStart();
+        final Handler handler = new Handler(Looper.getMainLooper());
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(TimeUnit.SECONDS.toMillis(5));
+                } catch (InterruptedException ignored) {}
+                //Mock data TODO replace with an error
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        listenerFinal.onDeviceDiscovered(new DeviceInList("Phone 1", "123123"));
+                        listenerFinal.onDeviceDiscovered(new DeviceInList("Phone 2", "123123"));
+                        listenerFinal.onDeviceDiscovered(new DeviceInList("Phone 3", "123123"));
+                        listenerFinal.onDeviceDiscovered(new DeviceInList("Phone 4", "123123"));
+                        listenerFinal.onDeviceDiscovered(new DeviceInList("Phone 5", "123123"));
+                        listenerFinal.onDiscoveryFinished();
+                    }
+                });
+            }
+        }).start();
     }
 
 
