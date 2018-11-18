@@ -1,23 +1,31 @@
 package com.chickeneater.tictactoe;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.chickeneater.tictactoe.core.data.TickTackBluetoothService;
+import com.chickeneater.tictactoe.game.GameBoard;
 
 import java.util.List;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 public class GameActivity extends AppCompatActivity {
-    public static final String DEVICE_ADDRESS = "device_id";
+    public static final String GAME_MODE = "game_mode";
+    public static final int MULTIPLAYER = 1;
+    public static final int SINGLEPLAYER = 2;
+
+    public static final String IS_HOST = "is_host";
+
     private GameViewModel gameViewModel;
 
     private int[][] gridImageIds = {{R.id.position_0_0, R.id.position_0_1, R.id.position_0_2},
@@ -32,13 +40,30 @@ public class GameActivity extends AppCompatActivity {
     private TextView player1Score;
     private TextView player2Score;
 
-    private TickTackBluetoothService mBluetoothService = TickTackBluetoothService.getInstance();
+    private int gameMode;
+    private boolean isHost;
+
+    public static void startMultiPlayerPlayerGame(Context packageContext, boolean asHost) {
+        Intent intent = new Intent(packageContext, GameActivity.class);
+        intent.putExtra(GameActivity.GAME_MODE, GameActivity.MULTIPLAYER);
+        intent.putExtra(GameActivity.IS_HOST, asHost);
+        packageContext.startActivity(intent);
+    }
+
+    public static void startSinglePlayerPlayerGame(Context packageContext) {
+        Intent intent = new Intent(packageContext, GameActivity.class);
+        intent.putExtra(GameActivity.GAME_MODE, GameActivity.SINGLEPLAYER);
+        packageContext.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        gameViewModel = ViewModelProviders.of(this).get(GameViewModel.class);
+        gameMode = getIntent().getIntExtra(GAME_MODE, SINGLEPLAYER);
+        isHost = getIntent().getBooleanExtra(IS_HOST, true);
+        ViewModelProvider.Factory factory = new GameViewModel.Factory(gameMode, isHost);
+        gameViewModel = ViewModelProviders.of(this, factory).get(GameViewModel.class);
         player1MoveIndicator = findViewById(R.id.player1moveindicator);
         player2MoveIndicator = findViewById(R.id.player2moveindicator);
         player1Score = findViewById(R.id.player1score);
@@ -91,12 +116,11 @@ public class GameActivity extends AppCompatActivity {
     public void onPlayerWon(int winner) {
 
         switch (winner) {
-            case GameModel.CROSS:
-
+            case GameBoard.CROSS:
                 winnerDialog("Player 1 Won");
                 break;
 
-            case GameModel.NOUGHT:
+            case GameBoard.NOUGHT:
                 winnerDialog("Player 2 Won");
                 break;
             case GameViewModel.DRAW:
@@ -113,13 +137,13 @@ public class GameActivity extends AppCompatActivity {
         for (int x = 0; x < 3; x++) {
             for (int y = 0; y < 3; y++) {
                 switch (lists.get(x).get(y)) {
-                    case GameModel.EMPTY:
+                    case GameBoard.EMPTY:
                         gridImageViews[x][y].setImageDrawable(null);
                         break;
-                    case GameModel.CROSS:
+                    case GameBoard.CROSS:
                         gridImageViews[x][y].setImageResource(R.drawable.ic_x);
                         break;
-                    case GameModel.NOUGHT:
+                    case GameBoard.NOUGHT:
                         gridImageViews[x][y].setImageResource(R.drawable.ic_o);
                         break;
                 }
@@ -150,7 +174,7 @@ public class GameActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .setPositiveButton("Play Again", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        gameViewModel.startGame();
+                        gameViewModel.startGame(gameMode, isHost);
                     }
                 })
                 .setNegativeButton("Exit", new DialogInterface.OnClickListener() {

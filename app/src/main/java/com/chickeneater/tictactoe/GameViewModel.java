@@ -1,35 +1,41 @@
 package com.chickeneater.tictactoe;
 
-import com.chickeneater.tictactoe.core.data.TickTackBluetoothService;
+import com.chickeneater.tictactoe.game.Game;
+import com.chickeneater.tictactoe.game.GameBoard;
+import com.chickeneater.tictactoe.game.HotScreenGame;
+import com.chickeneater.tictactoe.game.MultiPlayerGame;
+import com.chickeneater.tictactoe.game.OnGameEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
-public class GameViewModel extends ViewModel implements GameModel.OnGameEventListener, TickTackBluetoothService.OnMessageReceivedListener {
-
-    private GameModel mGame;
+public class GameViewModel extends ViewModel implements OnGameEventListener {
+    private Game mStrategy;
     public static final int DRAW = 3;
     private MutableLiveData<List<List<Integer>>> cellsListoflists = new MutableLiveData<>();
     private MutableLiveData<Integer> winnerState = new MutableLiveData<>();
     private MutableLiveData<Integer> player1Score = new MutableLiveData<>();
     private MutableLiveData<Integer> player2Score = new MutableLiveData<>();
     private int playerOneWin = 0, playerTwoWin = 0;
-    private TickTackBluetoothService mBluetoothService = TickTackBluetoothService.getInstance();
 
-    public GameViewModel() {
-       startGame();
+
+    public GameViewModel(int gameMode, boolean isHost) {
+       startGame(gameMode, isHost);
        player1Score.setValue(playerOneWin);
        player2Score.setValue(playerTwoWin);
-       mBluetoothService.addMessageReceivedListener(this);
     }
 
     @Override
     protected void onCleared() {
-        mBluetoothService.removeMessageReceivedListener(this);
+        if (mStrategy instanceof MultiPlayerGame) {
+            ((MultiPlayerGame) mStrategy).clean();
+        }
     }
 
     public MutableLiveData<Integer> getPlayer1Score() {
@@ -51,11 +57,10 @@ public class GameViewModel extends ViewModel implements GameModel.OnGameEventLis
     @Override
     public void onMoveMade() {
         List<List<Integer>> updatedBoard = new ArrayList<>();
-
         for (int x = 0; x < 3; x++) {
             updatedBoard.add(new ArrayList<Integer>());
             for (int y = 0; y < 3; y++) {
-                updatedBoard.get(x).add(mGame.get(x, y));
+                updatedBoard.get(x).add(mStrategy.get(x, y));
             }
         }
 
@@ -66,10 +71,10 @@ public class GameViewModel extends ViewModel implements GameModel.OnGameEventLis
     public void onPlayerWon(int winner) {
 
         switch (winner){
-            case GameModel.CROSS:
+            case GameBoard.CROSS:
                 player1Score.setValue(++playerOneWin);
                 break;
-            case GameModel.NOUGHT:
+            case GameBoard.NOUGHT:
                 player2Score.setValue(++playerTwoWin);
                 break;
         }
@@ -83,21 +88,21 @@ public class GameViewModel extends ViewModel implements GameModel.OnGameEventLis
     }
 
     public void makeMove(int x, int y) {
-        if (!mGame.isCellEmpty(x, y)) {
-            return;
+        if (mStrategy.canMakeMove()) {
+            mStrategy.makeMove(x, y);
         }
-
-        mGame.makeMove(x, y);
-        mBluetoothService.write(x + " " + y);
     }
 
     public boolean isCurrentPlayerCross() {
-        return mGame.isCurrentPlayerCross();
+        return mStrategy.canMakeMove();
     }
 
-    public void startGame() {
-        mGame = new GameModel();
-        mGame.setOnGameEventListener(this);
+    public void startGame(int gameMode, boolean isHost) {
+        if (gameMode == GameActivity.SINGLEPLAYER) {
+            mStrategy = new HotScreenGame(this);
+        } else if (gameMode == GameActivity.MULTIPLAYER) {
+            mStrategy = new MultiPlayerGame(this, isHost);
+        }
         List<List<Integer>> initialBoard = new ArrayList<>();
 
         for (int x = 0; x < 3; x++) {
@@ -110,11 +115,20 @@ public class GameViewModel extends ViewModel implements GameModel.OnGameEventLis
         cellsListoflists.setValue(initialBoard);
     }
 
-    @Override
-    public void onMessageReceived(String message) {
-        String[] messageXY = message.split(" ");
-        int x = Integer.parseInt(messageXY[0]);
-        int y = Integer.parseInt(messageXY[1]);
-        mGame.makeMove(x, y);
+    public static class Factory implements ViewModelProvider.Factory {
+        private final int mGameMode;
+        private final boolean mIsHost;
+
+        public Factory(int gameMode, boolean isHost) {
+            mGameMode = gameMode;
+            mIsHost = isHost;
+        }
+
+        @SuppressWarnings("unchecked")
+        @NonNull
+        @Override
+        public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+            return (T) new GameViewModel(mGameMode, mIsHost);
+        }
     }
 }

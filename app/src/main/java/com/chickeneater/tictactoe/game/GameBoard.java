@@ -1,62 +1,29 @@
-package com.chickeneater.tictactoe;
-
-import androidx.annotation.Nullable;
+package com.chickeneater.tictactoe.game;
 
 import java.util.Arrays;
 
-class GameModel {
+public class GameBoard {
     public static final int EMPTY = 0;
     public static final int NOUGHT = 1;
     public static final int CROSS = 2;
     public static final int DRAW = EMPTY;
 
     private int cellsArr[][] = new int[3][3];
-    private int winner = EMPTY;
-    private int activePlayer = CROSS;
-    @Nullable
-    private OnGameEventListener onGameEventListener;
 
-    public GameModel() {
+
+    public GameBoard() {
         for (int[] row : cellsArr) {
             Arrays.fill(row, EMPTY);
         }
     }
 
-    public void makeMove(int x, int y) {
-        if (activePlayer == CROSS) {
-            setCross(x, y);
-            activePlayer = NOUGHT;
-        } else {
-            setNought(x, y);
-            activePlayer = CROSS;
-        }
-
-        winner = assignWinner(x, y);
-        if (onGameEventListener == null) {
-            return;
-        }
-
-        if (winner != EMPTY){
-            onGameEventListener.onPlayerWon(winner);
-        } else if (isDraw()) {
-            onGameEventListener.onDraw();
-        } else {
-            onGameEventListener.onMoveMade();
-        }
-
-    }
-
-    public boolean isCurrentPlayerCross() {
-        return activePlayer == CROSS;
-    }
-
-    private void setNought(int x, int y) {
+    void setNought(int x, int y) {
         if (isCellEmpty(x, y)) {
             cellsArr[x][y] = NOUGHT;
         }
     }
 
-    private void setCross(int x, int y) {
+    void setCross(int x, int y) {
         if (isCellEmpty(x, y)) {
             cellsArr[x][y] = CROSS;
         }
@@ -71,7 +38,7 @@ class GameModel {
     }
 
     // method for checking winner public
-    private int assignWinner(int x, int y) {
+    int checkForAWinner(int x, int y) {
         if (x == y || (x == 0 && y == 2) || (x == 2 && y == 0)) {
             int mainDiagonal = checkMainDiagonal();
             if (mainDiagonal != EMPTY) {
@@ -97,7 +64,7 @@ class GameModel {
         return EMPTY;
     }
 
-    private boolean isDraw() {
+    boolean isDraw() {
         //check if the board is full
         for (int[] rows : cellsArr) {
             for (int cell : rows) {
@@ -108,7 +75,7 @@ class GameModel {
         return true;
     }
 
-    /*Sub Methods for assignWinner() methods*/
+    /*Sub Methods for checkForAWinner() methods*/
     //check if the same value
     private int checkIfSameVal(int a, int b, int c) {
         if (a != EMPTY && a == b && b == c) {
@@ -134,16 +101,5 @@ class GameModel {
 
     private int checkSubDiagonal() {
         return checkIfSameVal(cellsArr[0][2], cellsArr[1][1], cellsArr[2][0]);
-    }
-
-    public interface OnGameEventListener{
-
-        void onMoveMade(); //call this after each move
-        void onPlayerWon(int winner); //call this after someone won and who's the winner
-        void onDraw();
-    }
-
-    public void setOnGameEventListener(OnGameEventListener onGameEventListener){
-        this.onGameEventListener = onGameEventListener;
     }
 }

@@ -98,11 +98,10 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
             }
         });
 
-        mViewModel.getDeviceConnectedEvent().observe(this, new EventObserver<String>() {
+        mViewModel.getDeviceConnectedEvent().observe(this, new EventObserver<LobbyViewModel.Device>() {
             @Override
-            public void onEventHappened(String value) {
-                Intent intent = new Intent(LobbyActivity.this, GameActivity.class);
-                startActivity(intent);
+            public void onEventHappened(LobbyViewModel.Device value) {
+                GameActivity.startMultiPlayerPlayerGame(LobbyActivity.this, value.isHost);
             }
         });
 
