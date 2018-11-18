@@ -3,6 +3,7 @@ package com.chickeneater.tictactoe.lobby;
 import android.content.Context;
 
 import com.chickeneater.tictactoe.core.data.BluetoothDiscoveryService;
+import com.chickeneater.tictactoe.core.data.OnBluetoothConnectionServiceListener;
 import com.chickeneater.tictactoe.core.data.TickTackBluetoothService;
 import com.chickeneater.tictactoe.core.ui.Event;
 
@@ -23,14 +24,13 @@ import androidx.lifecycle.ViewModelProvider;
  * To the power of Love
  */
 public class LobbyViewModel extends ViewModel implements BluetoothDiscoveryService.BluetoothDiscoveryListener,
-        TickTackBluetoothService.OnBluetoothConnectionServiceListener {
+        OnBluetoothConnectionServiceListener {
     private BluetoothDiscoveryService mDiscoveryService;
     private TickTackBluetoothService mBluetoothService;
 
     private MutableLiveData<Boolean> isDiscovering = new MutableLiveData<>();
 
     private Set<DeviceInList> mDevicesSet = new HashSet<>();
-    private List<DeviceInList> mBluetoothDevices = new ArrayList<>();
 
     private MutableLiveData<List<DeviceInList>> mDevicesData = new MutableLiveData<>();
 
@@ -84,21 +84,41 @@ public class LobbyViewModel extends ViewModel implements BluetoothDiscoveryServi
     }
 
     @Override
+    public void onPreviouslyPairedDevicesObtained(Set<DeviceInList> pairedDevices) {
+        boolean isAnyAdded = false;
+        for (DeviceInList device: pairedDevices) {
+            isAnyAdded |= mDevicesSet.add(device);
+        }
+
+        if (isAnyAdded) {
+            displayDevices();
+        }
+    }
+
+    private void displayDevices() {
+        ArrayList<DeviceInList> devices = new ArrayList<>(mDevicesSet);
+        Collections.sort(devices);
+        mDevicesData.setValue(devices);
+    }
+
+    @Override
     public void onDeviceDiscovered(DeviceInList bluetoothDevice) {
         //Try to add device into a set if can update LiveData
         if (mDevicesSet.add(bluetoothDevice)) {
-            mBluetoothDevices.add(bluetoothDevice);
-            Collections.sort(mBluetoothDevices);
-            mDevicesData.setValue(mBluetoothDevices);
+            displayDevices();
         }
     }
 
     public void connectToDevice(DeviceInList device) {
-        mBluetoothService.connect(device.getAddress());
+        if (!(device instanceof DeviceInList.FakeDevice)) {
+            mBluetoothService.connect(device.getAddress());
+        } else {
+            onConnectedTo(device.getName(), true);
+        }
     }
 
     @Override
-    public void onConnectedTo(String deviceName) {
+    public void onConnectedTo(String deviceName, boolean asHost) {
         mDeviceConnectedEvent.setValue(new Event<>(deviceName));
     }
 

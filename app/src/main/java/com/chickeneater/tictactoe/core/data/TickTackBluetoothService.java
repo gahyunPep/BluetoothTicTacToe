@@ -12,20 +12,14 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 /**
  * Created by romanlee on 11/4/18.
  * To the power of Love
  */
-public class TickTackBluetoothService {
-
-    public interface OnBluetoothConnectionServiceListener {
-        void onConnectedTo(String deviceName);
-        void onConnectionFailed();
-    }
-
-    public interface OnMessageReceivedListener {
-        void onMessageReceived(String message);
-    }
+public class TickTackBluetoothService implements OnBluetoothConnectionServiceListener, OnMessageReceivedListener {
 
     private static  TickTackBluetoothService sInstance;
 
@@ -42,49 +36,31 @@ public class TickTackBluetoothService {
 
     private static final String TAG = TickTackBluetoothService.class.getName();
 
+    @Nullable
     private AcceptThread mSecureAcceptThread;
+    @Nullable
     private ConnectThread mConnectThread;
+    @Nullable
     private ConnectedThread mConnectedThread;
 
+    @Nullable
     final BluetoothAdapter mAdapter;
 
+    @NonNull
     private Set<OnBluetoothConnectionServiceListener> mConnectionServiceListeners = new HashSet<>();
+    @NonNull
     private Set<OnMessageReceivedListener> mOnMessageReceivedListeners = new HashSet<>();
 
     // Constants that indicate the current connection state
-    public static final int STATE_NONE = 0;       // we're doing nothing
-    public static final int STATE_LISTEN = 1;     // now listening for incoming connections
-    public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
-    public static final int STATE_CONNECTED = 3;  // now connected to a remote device
+    static final int STATE_NONE = 0;       // we're doing nothing
+    static final int STATE_LISTEN = 1;     // now listening for incoming connections
+    static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
+    static final int STATE_CONNECTED = 3;  // now connected to a remote device
 
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-     final Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case Constants.MESSAGE_DEVICE_NAME:
-                    // save the connected device's name
-                    String deviceName = msg.getData().getString(Constants.DEVICE_NAME);
-                    boolean isHost = msg.getData().getBoolean(Constants.IS_HOST);
-                    for (OnBluetoothConnectionServiceListener listener : mConnectionServiceListeners) {
-                        listener.onConnectedTo(deviceName);
-                    }
-
-                    break;
-
-                case Constants.MESSAGE_READ:
-                    byte[] readBuf = (byte[]) msg.obj;
-                    // construct a string from the valid bytes in the buffer
-                    String readMessage = new String(readBuf, 0, msg.arg1);
-                    for (OnMessageReceivedListener listener : mOnMessageReceivedListeners) {
-                        listener.onMessageReceived(readMessage);
-                    }
-                    break;
-            }
-        }
-    };
+    final Handler mHandler = new BluetoothMessageHandler(this, this);
 
     private int mState;
 
@@ -132,8 +108,6 @@ public class TickTackBluetoothService {
             mSecureAcceptThread = new AcceptThread(this);
             mSecureAcceptThread.start();
         }
-        // Update UI title
-        //updateUserInterfaceTitle();
     }
 
     /**
@@ -142,6 +116,9 @@ public class TickTackBluetoothService {
      * @param address The BluetoothDevice to connect
      */
     public synchronized void connect(String address) {
+        if (mAdapter == null) {
+            return;
+        }
         BluetoothDevice device = mAdapter.getRemoteDevice(address);
 
         Log.d(TAG, "connect to: " + device);
@@ -163,8 +140,6 @@ public class TickTackBluetoothService {
         // Start the thread to connect with the given device
         mConnectThread = new ConnectThread(this, device);
         mConnectThread.start();
-        // Update UI title
-        //updateUserInterfaceTitle();
     }
 
     /**
@@ -200,11 +175,18 @@ public class TickTackBluetoothService {
 
         // Send the name of the connected device back to the UI Activity
 
-        Message msg = mHandler.obtainMessage(Constants.MESSAGE_DEVICE_NAME);
         Bundle bundle = new Bundle();
         bundle.putString(Constants.DEVICE_NAME, device.getName());
         bundle.putBoolean(Constants.IS_HOST, isHost);
-        msg.setData(bundle);
+
+        sendMessage(Constants.MESSAGE_DEVICE_NAME, bundle);
+    }
+
+    private void sendMessage(int what, @Nullable Bundle bundle) {
+        Message msg = mHandler.obtainMessage(what);
+        if (bundle != null) {
+            msg.setData(bundle);
+        }
         mHandler.sendMessage(msg);
     }
 
@@ -246,7 +228,9 @@ public class TickTackBluetoothService {
             r = mConnectedThread;
         }
         // Perform the write unsynchronized
-        r.write(out);
+        if (r != null) {
+            r.write(out);
+        }
     }
 
     public void write(String command) {
@@ -269,47 +253,43 @@ public class TickTackBluetoothService {
      * Indicate that the connection attempt failed and notify the UI Activity.
      */
     void connectionFailed() {
-        for (OnBluetoothConnectionServiceListener listener : mConnectionServiceListeners) {
-            listener.onConnectionFailed();
-        }
-        // Send a failure message back to the Activity
-        /*
-        Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
-        Bundle bundle = new Bundle();
-        bundle.putString(Constants.TOAST, "Unable to connect device");
-        msg.setData(bundle);
-        mHandler.sendMessage(msg);
-        */
-
+        sendMessage(Constants.MESSAGE_CONNECTION_FAILED, null);
         mState = STATE_NONE;
-        // Update UI title
-        //updateUserInterfaceTitle();
-
         // Start the service over to restart listening mode
-        //BluetoothChatService.this.start();
+        start();
     }
 
     /**
      * Indicate that the connection was lost and notify the UI Activity.
      */
     void connectionLost() {
-        // Send a failure message back to the Activity
-        /*
-        Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
-        Bundle bundle = new Bundle();
-        bundle.putString(Constants.TOAST, "Device connection was lost");
-        msg.setData(bundle);
-        mHandler.sendMessage(msg);
-        */
-
+        sendMessage(Constants.MESSAGE_CONNECTION_LOST, null);
         mState = STATE_NONE;
-        // Update UI title
-        //updateUserInterfaceTitle();
-
         // Start the service over to restart listening mode
         start();
     }
 
+
+    @Override
+    public void onConnectedTo(String deviceName, boolean asHost) {
+        for (OnBluetoothConnectionServiceListener listener : mConnectionServiceListeners) {
+            listener.onConnectedTo(deviceName, asHost);
+        }
+    }
+
+    @Override
+    public void onConnectionFailed() {
+        for (OnBluetoothConnectionServiceListener listener : mConnectionServiceListeners) {
+            listener.onConnectionFailed();
+        }
+    }
+
+    @Override
+    public void onMessageReceived(String message) {
+        for (OnMessageReceivedListener listener : mOnMessageReceivedListeners) {
+            listener.onMessageReceived(message);
+        }
+    }
 
     public void addConnectionListener(OnBluetoothConnectionServiceListener listener) {
         mConnectionServiceListeners.add(listener);
@@ -327,3 +307,4 @@ public class TickTackBluetoothService {
         mOnMessageReceivedListeners.remove(listener);
     }
 }
+

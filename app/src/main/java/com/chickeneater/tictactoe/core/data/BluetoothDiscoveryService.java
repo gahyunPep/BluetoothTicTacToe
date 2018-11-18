@@ -11,9 +11,12 @@ import android.os.Looper;
 
 import com.chickeneater.tictactoe.lobby.DeviceInList;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 
 /**
@@ -21,6 +24,7 @@ import androidx.annotation.NonNull;
  * To the power of Love
  */
 public class BluetoothDiscoveryService {
+    @Nullable
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
     private class BluetoothDiscoveryBroadcastReceiver extends BroadcastReceiver {
@@ -48,10 +52,12 @@ public class BluetoothDiscoveryService {
     }
 
     public void stopDiscovery() {
-        mBluetoothAdapter.cancelDiscovery();
+        if (mBluetoothAdapter != null) {
+            mBluetoothAdapter.cancelDiscovery();
+        }
     }
 
-    public void discoverDevices(Context context, BluetoothDiscoveryListener listener) {
+    public void discoverDevices(Context context, @NonNull  BluetoothDiscoveryListener listener) {
         if (mBluetoothAdapter != null) {
             IntentFilter filter = new IntentFilter();
             filter.addAction(BluetoothDevice.ACTION_FOUND);
@@ -60,13 +66,21 @@ public class BluetoothDiscoveryService {
 
             context.registerReceiver(new BluetoothDiscoveryBroadcastReceiver(listener), filter);
 
+
+            Set<DeviceInList> pairedDevices = new HashSet<>();
+            for (BluetoothDevice device : mBluetoothAdapter.getBondedDevices()) {
+                pairedDevices.add(new DeviceInList(device.getName(), device.getAddress()));
+            }
+            listener.onPreviouslyPairedDevicesObtained(pairedDevices);
+
+
             mBluetoothAdapter.startDiscovery();
         } else {
             fakeDevices(listener);
         }
     }
 
-    private void fakeDevices(BluetoothDiscoveryListener listener) {
+    private void fakeDevices(@NonNull BluetoothDiscoveryListener listener) {
         final BluetoothDiscoveryListener listenerFinal = listener;
         listener.onDiscoveryStart();
         final Handler handler = new Handler(Looper.getMainLooper());
@@ -80,11 +94,11 @@ public class BluetoothDiscoveryService {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        listenerFinal.onDeviceDiscovered(new DeviceInList("Phone 1", "123123"));
-                        listenerFinal.onDeviceDiscovered(new DeviceInList("Phone 2", "123123"));
-                        listenerFinal.onDeviceDiscovered(new DeviceInList("Phone 3", "123123"));
-                        listenerFinal.onDeviceDiscovered(new DeviceInList("Phone 4", "123123"));
-                        listenerFinal.onDeviceDiscovered(new DeviceInList("Phone 5", "123123"));
+                        listenerFinal.onDeviceDiscovered(new DeviceInList.FakeDevice());
+                        listenerFinal.onDeviceDiscovered(new DeviceInList.FakeDevice());
+                        listenerFinal.onDeviceDiscovered(new DeviceInList.FakeDevice());
+                        listenerFinal.onDeviceDiscovered(new DeviceInList.FakeDevice());
+                        listenerFinal.onDeviceDiscovered(new DeviceInList.FakeDevice());
                         listenerFinal.onDiscoveryFinished();
                     }
                 });
@@ -96,6 +110,7 @@ public class BluetoothDiscoveryService {
     public interface BluetoothDiscoveryListener {
         void onDiscoveryStart();
         void onDiscoveryFinished();
+        void onPreviouslyPairedDevicesObtained(Set<DeviceInList> pairedDevices);
         void onDeviceDiscovered(DeviceInList bluetoothDevice);
     }
 }

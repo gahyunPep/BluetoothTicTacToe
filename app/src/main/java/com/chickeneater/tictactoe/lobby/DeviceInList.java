@@ -63,4 +63,10 @@ public class DeviceInList implements Comparable<DeviceInList> {
 
         return mName.compareTo(o.mName);
     }
+
+    public static class FakeDevice extends DeviceInList{
+        public FakeDevice() {
+            super("FakeName", "Fake address");
+        }
+    }
 }
