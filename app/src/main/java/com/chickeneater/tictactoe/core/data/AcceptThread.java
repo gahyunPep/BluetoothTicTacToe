@@ -30,6 +30,8 @@ class AcceptThread extends Thread {
 
         } catch (IOException e) {
             Log.e(TAG, "Socket Type: listen() failed", e);
+        } catch (NullPointerException e) {
+            Log.e(TAG, "adapter is null");
         }
         mmServerSocket = tmp;
         mService.setState(TickTackBluetoothService.STATE_LISTEN);
