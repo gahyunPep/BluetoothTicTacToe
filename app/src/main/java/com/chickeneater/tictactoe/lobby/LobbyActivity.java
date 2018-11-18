@@ -34,10 +34,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
     private Button rescanBtn;
     private ProgressBar rescanProgressBar;
     private TextView scanTxt;
-    private TextView preTxt;
-    private TextView deviceTxt;
     private RecyclerView mDevicesRecyclerView;
-    private RecyclerView pDevicesRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +44,6 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
         rescanProgressBar = findViewById(R.id.rescanProgressbar);
         scanTxt = findViewById(R.id.scantextView);
         mDevicesRecyclerView = findViewById(R.id.devicesRecyclerView);
-        pDevicesRecyclerView = findViewById(R.id.preDevicesRecyclerView);
-        preTxt = findViewById(R.id.preDeviceTxtView);
-        deviceTxt = findViewById(R.id.newDeviceTxtView);
         mAdapter = new DevicesRecyclerViewAdapter(new DevicesDifUtils());
         mAdapter.setOnDeviceSelectedListener(this);
         mDevicesRecyclerView.setAdapter(mAdapter);
@@ -66,19 +60,10 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
                     rescanBtn.setVisibility(View.INVISIBLE);
                     rescanProgressBar.setVisibility(View.VISIBLE);
                     scanTxt.setVisibility(View.VISIBLE);
-                    mDevicesRecyclerView.setVisibility(View.INVISIBLE);
-                    pDevicesRecyclerView.setVisibility(View.INVISIBLE);
-                    preTxt.setVisibility(View.INVISIBLE);
-                    deviceTxt.setVisibility(View.INVISIBLE);
-
                 } else {
                     rescanBtn.setVisibility(View.VISIBLE);
                     rescanProgressBar.setVisibility(View.INVISIBLE);
                     scanTxt.setVisibility(View.INVISIBLE);
-                    mDevicesRecyclerView.setVisibility(View.VISIBLE);
-                    pDevicesRecyclerView.setVisibility(View.VISIBLE);
-                    preTxt.setVisibility(View.VISIBLE);
-                    deviceTxt.setVisibility(View.VISIBLE);
                 }
             }
         });
