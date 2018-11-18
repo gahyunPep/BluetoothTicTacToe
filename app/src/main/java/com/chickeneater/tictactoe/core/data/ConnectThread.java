@@ -42,7 +42,9 @@ class ConnectThread extends Thread {
         setName("ConnectThread");
 
         // Always cancel discovery because it will slow down a connection
-        mService.mAdapter.cancelDiscovery();
+        if (mService.mAdapter != null) {
+            mService.mAdapter.cancelDiscovery();
+        }
 
         // Make a connection to the BluetoothSocket
         try {
