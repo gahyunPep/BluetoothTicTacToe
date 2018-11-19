@@ -31,8 +31,9 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
     private static final int PERMISSION_REQUEST_LOCATION = 303;
     private LobbyViewModel mViewModel;
     private Button rescanBtn;
-    private ProgressBar rescanProgressBar;
+    private ProgressBar scanProgressBar;
     private TextView scanTxt;
+    private TextView connectTxt;
     private RecyclerView mDevicesRecyclerView;
 
     @Override
@@ -40,8 +41,8 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
         requestLocationPermission(); //TODO @Mr.Lee sometimes bluetooth permission pops up earlier than location permission HELP ME
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lobby);
-        rescanProgressBar = findViewById(R.id.rescanProgressbar);
-        scanTxt = findViewById(R.id.scantextView);
+        scanProgressBar = findViewById(R.id.rescanProgressbar);
+        scanTxt = findViewById(R.id.scanTextView);
         mDevicesRecyclerView = findViewById(R.id.devicesRecyclerView);
         mAdapter = new DevicesRecyclerViewAdapter(new DevicesDifUtils());
         mAdapter.setOnDeviceSelectedListener(this);
@@ -57,11 +58,11 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
             public void onChanged(Boolean isSearching) {
                 if (isSearching) {
                     rescanBtn.setVisibility(View.INVISIBLE);
-                    rescanProgressBar.setVisibility(View.VISIBLE);
+                    scanProgressBar.setVisibility(View.VISIBLE);
                     scanTxt.setVisibility(View.VISIBLE);
                 } else {
                     rescanBtn.setVisibility(View.VISIBLE);
-                    rescanProgressBar.setVisibility(View.INVISIBLE);
+                    scanProgressBar.setVisibility(View.INVISIBLE);
                     scanTxt.setVisibility(View.INVISIBLE);
                 }
             }
@@ -116,6 +117,9 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
     //method clicks and gets phone name and address and return it
     private void connectToDevice(DeviceInList device) {
         //TODO Gahyun show progress bar, and restrict user from clicking again
+        scanProgressBar.setVisibility(View.VISIBLE);
+        connectTxt.setVisibility(View.VISIBLE);
+        mDevicesRecyclerView.setVisibility(View.INVISIBLE);
         mViewModel.connectToDevice(device);
     }
 

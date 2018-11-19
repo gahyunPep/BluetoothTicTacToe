@@ -88,9 +88,6 @@ public class LobbyViewModel extends ViewModel implements BluetoothDiscoveryServi
         boolean isAnyAdded = false;
         for (DeviceInList device: pairedDevices) {
             isAnyAdded |= mDevicesSet.add(device);
-            if(isAnyAdded){
-                device.setPaired(true);
-            }
         }
 
         if (isAnyAdded) {

@@ -10,4 +10,6 @@
     <string name="user_name_label">Type your name and press start!</string>
     <string name="scan_btn">Scan devices again</string>
     <string name="scanTxt">Scanning devices ...</string>
+    <string name="connectTxt">Connecting ...</string>
+    <string name="deviceTxt">Devices</string>
 </resources>

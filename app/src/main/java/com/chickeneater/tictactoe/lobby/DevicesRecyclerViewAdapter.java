@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chickeneater.tictactoe.R;
@@ -33,6 +34,11 @@ public class DevicesRecyclerViewAdapter extends ListAdapter<DeviceInList, Device
 
         viewHolder.deviceName.setText(device.getName());
         viewHolder.deviceAddress.setText(device.getAddress());
+        if(device.getPaired()){
+            viewHolder.pairedIcon.setVisibility(View.VISIBLE);
+        }else{
+            viewHolder.pairedIcon.setVisibility(View.INVISIBLE);
+        }
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -43,10 +49,12 @@ public class DevicesRecyclerViewAdapter extends ListAdapter<DeviceInList, Device
 
     class ViewHolder extends RecyclerView.ViewHolder{
         TextView deviceName, deviceAddress;
+        ImageView pairedIcon;
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             deviceName = itemView.findViewById(R.id.deviceNameView);
             deviceAddress = itemView.findViewById(R.id.deviceAddressView);
+            pairedIcon = itemView.findViewById(R.id.pairdImageView);
         }
     }
 

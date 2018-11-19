@@ -18,7 +18,7 @@ public class DeviceInList implements Comparable<DeviceInList> {
     @NonNull
     private final String mAddress;
     @NonNull
-    private boolean paired;
+    private boolean paired = false;
 
     public DeviceInList(@Nullable String name, @Nullable String address) {
         mName = name != null ? name : DEFAULT_DEVICE_NAME;
@@ -66,11 +66,11 @@ public class DeviceInList implements Comparable<DeviceInList> {
     public int compareTo(DeviceInList o) {
 
         if(paired && !o.paired){
-            return 1;
+            return -1;
         }
 
         if(!paired && o.paired) {
-            return -1;
+            return 1;
         }
 
         if (DEFAULT_DEVICE_NAME.equals(mName) && DEFAULT_DEVICE_NAME.equals(o.mName)) {
@@ -78,11 +78,11 @@ public class DeviceInList implements Comparable<DeviceInList> {
         }
 
         if (DEFAULT_DEVICE_NAME.equals(mName)) {
-            return 1;
+            return -1;
         }
 
         if (DEFAULT_DEVICE_NAME.equals(o.mName)) {
-            return -1;
+            return 1;
         }
         return mName.compareTo(o.mName);
     }

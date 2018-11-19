@@ -69,7 +69,7 @@ public class BluetoothDiscoveryService {
 
             Set<DeviceInList> pairedDevices = new HashSet<>();
             for (BluetoothDevice device : mBluetoothAdapter.getBondedDevices()) {
-                pairedDevices.add(new DeviceInList(device.getName(), device.getAddress()));
+                pairedDevices.add(new DeviceInList(device.getName(), device.getAddress(), true));
             }
             listener.onPreviouslyPairedDevicesObtained(pairedDevices);
 
