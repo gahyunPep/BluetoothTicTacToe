@@ -25,7 +25,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
-//TODO @Gahyun add scan again button in to actionbar call restartScan() function when clicked
 public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerViewAdapter.OnDeviceSelectedListener {
     private DevicesRecyclerViewAdapter mAdapter;
     private static final int DISCOVERABILITY_TIME = 20;
