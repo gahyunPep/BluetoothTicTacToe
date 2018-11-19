@@ -20,10 +20,15 @@ public class DeviceInList implements Comparable<DeviceInList> {
     @NonNull
     private boolean paired;
 
-    public DeviceInList(@Nullable String name, @Nullable String address, boolean connectedBefore) {
+    public DeviceInList(@Nullable String name, @Nullable String address) {
         mName = name != null ? name : DEFAULT_DEVICE_NAME;
         mAddress = address != null ? address : "Unknown address";
-        this.paired = connectedBefore;
+    }
+
+    public DeviceInList(@Nullable String name, @Nullable String address, boolean paired) {
+        mName = name != null ? name : DEFAULT_DEVICE_NAME;
+        mAddress = address != null ? address : "Unknown address";
+        this.paired = paired;
     }
 
     @NonNull
@@ -38,6 +43,10 @@ public class DeviceInList implements Comparable<DeviceInList> {
 
     @NonNull
     public boolean getPaired() {return paired;}
+
+    public void setPaired(@NonNull boolean paired) {
+        this.paired = paired;
+    }
 
     @Override
     public boolean equals(Object o) {
