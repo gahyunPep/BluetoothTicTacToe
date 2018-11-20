@@ -306,5 +306,9 @@ public class TickTackBluetoothService implements OnBluetoothConnectionServiceLis
     public void removeMessageReceivedListener(OnMessageReceivedListener listener) {
         mOnMessageReceivedListeners.remove(listener);
     }
+
+    public void disconnect() {
+        //TODO @Rokanank make this method
+    }
 }
 

@@ -4,11 +4,9 @@ import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,9 +32,9 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
     private static final int DISCOVERABILITY_TIME = 20;
     private static final int PERMISSION_REQUEST_LOCATION = 303;
     private LobbyViewModel mViewModel;
-    private ProgressBar scanProgressBar;
-    private TextView scanTxt;
-    private TextView connectTxt;
+    private ProgressBar mScanProgressBar;
+    private TextView mScanTxt;
+    private TextView mConnectTxt;
     private RecyclerView mDevicesRecyclerView;
     private Toolbar mToolbar;
     private MenuItem mScanButton;
@@ -44,32 +42,15 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        requestLocationPermission(); //TODO @Mr.Lee sometimes bluetooth permission pops up earlier than location permission HELP ME
+        requestLocationPermission(savedInstanceState);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lobby);
-        scanProgressBar = findViewById(R.id.rescanProgressbar);
-        scanTxt = findViewById(R.id.scanTextView);
-        mDevicesRecyclerView = findViewById(R.id.devicesRecyclerView);
-        mAdapter = new DevicesRecyclerViewAdapter(new DevicesDifUtils());
-        mAdapter.setOnDeviceSelectedListener(this);
-        mDevicesRecyclerView.setAdapter(mAdapter);
-        mToolbar = findViewById(R.id.toolbar);
-        mToolbar.inflateMenu(R.menu.toolbar_menu);
-        mScanButton = mToolbar.getMenu().getItem(0);
-        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                if(item.getItemId() == R.id.menu_scan){
-                    restartScan();
-                    return true;
-                }
-                return false;
-            }
-        });
+        mScanProgressBar = findViewById(R.id.rescanProgressbar);
+        mScanTxt = findViewById(R.id.scanTextView);
+        mConnectTxt = findViewById(R.id.connectTextView);
+        setupList();
+        setupToolbar();
 
-        if (savedInstanceState == null) { //Avoid running it on screen rotation
-            becameDiscoverable();
-        }
         mViewModel = ViewModelProviders.of(this, new LobbyViewModel.Factory(this)).get(LobbyViewModel.class);
 
         mViewModel.getIsDiscovering().observe(this, new Observer<Boolean>() {
@@ -77,12 +58,12 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
             public void onChanged(Boolean isSearching) {
                 if (isSearching) {
                     mScanButton.setEnabled(false);
-                    scanProgressBar.setVisibility(View.VISIBLE);
-                    scanTxt.setVisibility(View.VISIBLE);
+                    mScanProgressBar.setVisibility(View.VISIBLE);
+                    mScanTxt.setVisibility(View.VISIBLE);
                 } else {
                     mScanButton.setEnabled(true);
-                    scanProgressBar.setVisibility(View.INVISIBLE);
-                    scanTxt.setVisibility(View.INVISIBLE);
+                    mScanProgressBar.setVisibility(View.INVISIBLE);
+                    mScanTxt.setVisibility(View.INVISIBLE);
                 }
             }
         });
@@ -98,6 +79,8 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
         mViewModel.getDeviceConnectedEvent().observe(this, new EventObserver<LobbyViewModel.Device>() {
             @Override
             public void onEventHappened(LobbyViewModel.Device value) {
+                mConnectTxt.setVisibility(View.INVISIBLE);
+                mScanProgressBar.setVisibility(View.INVISIBLE);
                 GameActivity.startMultiPlayerPlayerGame(LobbyActivity.this, value.isHost);
             }
         });
@@ -107,6 +90,29 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
             @Override
             public void onEventHappened(Void value) {
                 //TODO @Gahuyn show message that connection failed and give user opportunity to click again
+            }
+        });
+    }
+
+    private void setupList() {
+        mDevicesRecyclerView = findViewById(R.id.devicesRecyclerView);
+        mAdapter = new DevicesRecyclerViewAdapter(new DevicesDifUtils());
+        mAdapter.setOnDeviceSelectedListener(this);
+        mDevicesRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void setupToolbar() {
+        mToolbar = findViewById(R.id.toolbar);
+        mToolbar.inflateMenu(R.menu.toolbar_menu);
+        mScanButton = mToolbar.getMenu().getItem(0);
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if(item.getItemId() == R.id.menu_scan){
+                    restartScan();
+                    return true;
+                }
+                return false;
             }
         });
     }
@@ -129,8 +135,8 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
     //method clicks and gets phone name and address and return it
     private void connectToDevice(DeviceInList device) {
         //TODO Gahyun show progress bar, and restrict user from clicking again
-        scanProgressBar.setVisibility(View.VISIBLE);
-        connectTxt.setVisibility(View.VISIBLE);
+        mScanProgressBar.setVisibility(View.VISIBLE);
+        mConnectTxt.setVisibility(View.VISIBLE);
         mDevicesRecyclerView.setVisibility(View.INVISIBLE);
         mViewModel.connectToDevice(device);
     }
@@ -143,13 +149,15 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
         startActivity(discoverableIntent);
     }
 
-    private void requestLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-           ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                   PERMISSION_REQUEST_LOCATION);
-        } else {
-            Toast.makeText(this, "Already has permission", Toast.LENGTH_SHORT).show();
+    private void requestLocationPermission(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        PERMISSION_REQUEST_LOCATION);
+            } else {
+                    becameDiscoverable();
+            }
         }
     }
 
@@ -158,7 +166,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
         //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_LOCATION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Just got the permission", Toast.LENGTH_SHORT).show();
+                    becameDiscoverable();
             } else {
                 Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show();
             }

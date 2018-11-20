@@ -6,6 +6,8 @@ import android.util.Log;
 
 import java.io.IOException;
 
+import androidx.annotation.Nullable;
+
 /**
  * This thread runs while listening for incoming connections. It behaves
  * like a server-side client. It runs until a connection is accepted
@@ -16,6 +18,7 @@ class AcceptThread extends Thread {
 
     private final TickTackBluetoothService mService;
     // The local server socket
+    @Nullable
     private final BluetoothServerSocket mmServerSocket;
 
     public AcceptThread(TickTackBluetoothService service) {
@@ -29,9 +32,9 @@ class AcceptThread extends Thread {
                     TickTackBluetoothService.MY_UUID_SECURE);
 
         } catch (IOException e) {
-            Log.e(TAG, "Socket Type: listen() failed", e);
+            Log.d(TAG, "Socket Type: listen() failed", e);
         } catch (NullPointerException e) {
-            Log.e(TAG, "adapter is null");
+            Log.d(TAG, "adapter is null");
         }
         mmServerSocket = tmp;
         mService.setState(TickTackBluetoothService.STATE_LISTEN);
@@ -49,7 +52,9 @@ class AcceptThread extends Thread {
             try {
                 // This is a blocking call and will only return on a
                 // successful connection or an exception
-                socket = mmServerSocket.accept();
+                if (mmServerSocket != null) {
+                    socket = mmServerSocket.accept();
+                }
             } catch (IOException e) {
                 Log.e(TAG, "Socket Type: accept() failed", e);
                 break;
@@ -84,7 +89,9 @@ class AcceptThread extends Thread {
     public void cancel() {
         Log.d(TAG, "cancel " + this);
         try {
-            mmServerSocket.close();
+            if (mmServerSocket != null) {
+                mmServerSocket.close();
+            }
         } catch (IOException e) {
             Log.e(TAG, "close() of server failed", e);
         }

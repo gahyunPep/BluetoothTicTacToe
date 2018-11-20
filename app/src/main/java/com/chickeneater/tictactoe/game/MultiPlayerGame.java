@@ -5,6 +5,8 @@ import com.chickeneater.tictactoe.core.data.TickTackBluetoothService;
 
 import androidx.annotation.NonNull;
 
+import static com.chickeneater.tictactoe.game.GameBoard.EMPTY;
+
 /**
  * Created by romanlee on 11/17/18.
  * To the power of Love
@@ -22,6 +24,7 @@ public class MultiPlayerGame extends AbstractGame implements OnMessageReceivedLi
 
     public void clean() {
         mBluetoothService.removeMessageReceivedListener(this);
+        mBluetoothService.disconnect();
     }
 
     @Override
@@ -35,6 +38,14 @@ public class MultiPlayerGame extends AbstractGame implements OnMessageReceivedLi
             mBoard.setCross(x, y);
         }
         moveMade(x, y);
+        int winner = mBoard.checkForAWinner(x, y);
+
+        mOnGameEventListener.onMoveMade();
+        if (winner != EMPTY) {
+            mOnGameEventListener.onPlayerWon(winner);
+        } else if (mBoard.isDraw()) {
+            mOnGameEventListener.onDraw();
+        }
     }
 
     @Override
