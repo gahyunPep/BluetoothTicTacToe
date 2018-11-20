@@ -153,11 +153,11 @@ public class GameActivity extends AppCompatActivity {
 
     private void moveIndicatorChange() {
         if (gameViewModel.isCurrentPlayerCross()) {
-            player2MoveIndicator.setBackgroundColor(getResources().getColor(R.color.colorMoveIndicator));
-            player1MoveIndicator.setBackgroundResource(android.R.drawable.btn_default);
-        } else {
             player1MoveIndicator.setBackgroundColor(getResources().getColor(R.color.colorMoveIndicator));
             player2MoveIndicator.setBackgroundResource(android.R.drawable.btn_default);
+        } else {
+            player2MoveIndicator.setBackgroundColor(getResources().getColor(R.color.colorMoveIndicator));
+            player1MoveIndicator.setBackgroundResource(android.R.drawable.btn_default);
         }
 
     }
