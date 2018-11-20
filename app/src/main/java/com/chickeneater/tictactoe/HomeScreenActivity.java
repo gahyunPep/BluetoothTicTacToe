@@ -15,8 +15,10 @@ import com.google.android.material.textfield.TextInputEditText;
 
 public class HomeScreenActivity extends AppCompatActivity {
 
-    Button startButton;
+    Button hostButton;
     Button statsButton;
+    Button joinButton;
+    Button deviceMultiplayerButton;
     TextInputEditText nameInput;
     public final static String NAME = "Name";
 
@@ -24,11 +26,13 @@ public class HomeScreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
-        startButton = findViewById(R.id.startButton);
+        hostButton = findViewById(R.id.hostBluetoothButton);
         statsButton = findViewById(R.id.statsButton);
         nameInput = findViewById(R.id.inputName);
+        joinButton = findViewById(R.id.joinBluetoothButton);
+        deviceMultiplayerButton = findViewById(R.id.deviceMultiplayerButton);
 
-        startButton.setOnClickListener(new View.OnClickListener() {
+        hostButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String name = String.valueOf(nameInput.getText());
@@ -44,6 +48,20 @@ public class HomeScreenActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(HomeScreenActivity.this, StatsActivity.class));
+            }
+        });
+
+        deviceMultiplayerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        joinButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(HomeScreenActivity.this, GameActivity.class));
             }
         });
     }

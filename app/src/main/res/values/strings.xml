@@ -4,7 +4,9 @@
     <string name="Player1">Player 1</string>
     <string name="Player2">Player 2</string>
     <string name="title">TicTacToe</string>
-    <string name="begin">Begin</string>
+    <string name="multiPlayerOnDevice">Device MultiPlayer</string>
+    <string name="hostBluetooth">Host Game</string>
+    <string name="joinBluetooth">Join Game</string>
     <string name="stats">Stats</string>
     <string name="name_hint">Type your name here</string>
     <string name="user_name_label">Type your name and press start!</string>
