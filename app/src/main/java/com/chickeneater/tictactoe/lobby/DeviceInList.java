@@ -78,11 +78,11 @@ public class DeviceInList implements Comparable<DeviceInList> {
         }
 
         if (DEFAULT_DEVICE_NAME.equals(mName)) {
-            return -1;
+            return 1;
         }
 
         if (DEFAULT_DEVICE_NAME.equals(o.mName)) {
-            return 1;
+            return -1;
         }
         return mName.compareTo(o.mName);
     }

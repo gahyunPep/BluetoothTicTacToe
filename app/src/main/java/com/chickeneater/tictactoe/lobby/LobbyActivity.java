@@ -4,7 +4,9 @@ import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -19,22 +21,26 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
+
 public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerViewAdapter.OnDeviceSelectedListener {
     private DevicesRecyclerViewAdapter mAdapter;
     private static final int DISCOVERABILITY_TIME = 20;
     private static final int PERMISSION_REQUEST_LOCATION = 303;
     private LobbyViewModel mViewModel;
-    private Button rescanBtn;
     private ProgressBar scanProgressBar;
     private TextView scanTxt;
     private TextView connectTxt;
     private RecyclerView mDevicesRecyclerView;
+    private Toolbar mToolbar;
+    private MenuItem mScanButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +53,19 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
         mAdapter = new DevicesRecyclerViewAdapter(new DevicesDifUtils());
         mAdapter.setOnDeviceSelectedListener(this);
         mDevicesRecyclerView.setAdapter(mAdapter);
+        mToolbar = findViewById(R.id.toolbar);
+        mToolbar.inflateMenu(R.menu.toolbar_menu);
+        mScanButton = mToolbar.getMenu().getItem(0);
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if(item.getItemId() == R.id.menu_scan){
+                    restartScan();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         if (savedInstanceState == null) { //Avoid running it on screen rotation
             becameDiscoverable();
@@ -57,11 +76,11 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
             @Override
             public void onChanged(Boolean isSearching) {
                 if (isSearching) {
-                    rescanBtn.setVisibility(View.INVISIBLE);
+                    mScanButton.setEnabled(false);
                     scanProgressBar.setVisibility(View.VISIBLE);
                     scanTxt.setVisibility(View.VISIBLE);
                 } else {
-                    rescanBtn.setVisibility(View.VISIBLE);
+                    mScanButton.setEnabled(true);
                     scanProgressBar.setVisibility(View.INVISIBLE);
                     scanTxt.setVisibility(View.INVISIBLE);
                 }
@@ -75,13 +94,6 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
             }
         });
 
-        rescanBtn = findViewById(R.id.rescanBtn);
-        rescanBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                restartScan();
-            }
-        });
 
         mViewModel.getDeviceConnectedEvent().observe(this, new EventObserver<LobbyViewModel.Device>() {
             @Override

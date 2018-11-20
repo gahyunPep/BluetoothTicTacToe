@@ -12,4 +12,6 @@
     <string name="scanTxt">Scanning devices ...</string>
     <string name="connectTxt">Connecting ...</string>
     <string name="deviceTxt">Devices</string>
+    <string name="toolbarTitle">Devices</string>
+    <string name="scan">SCAN</string>
 </resources>
