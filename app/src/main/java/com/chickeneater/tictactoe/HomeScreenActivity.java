@@ -54,14 +54,14 @@ public class HomeScreenActivity extends AppCompatActivity {
         deviceMultiplayerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(HomeScreenActivity.this, GameActivity.class));
+               GameActivity.startSinglePlayerPlayerGame(v.getContext());
             }
         });
 
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                GameActivity.startMultiPlayerPlayerGame(v.getContext(), false);
             }
         });
     }
