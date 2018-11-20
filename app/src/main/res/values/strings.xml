@@ -16,4 +16,5 @@
     <string name="deviceTxt">Devices</string>
     <string name="toolbarTitle">Devices</string>
     <string name="scan">SCAN</string>
+    <string name="waitingToConnect">Waiting for Opponent to connect...</string>
 </resources>
