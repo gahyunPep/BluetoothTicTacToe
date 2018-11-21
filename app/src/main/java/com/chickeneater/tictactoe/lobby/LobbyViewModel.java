@@ -26,7 +26,7 @@ import androidx.lifecycle.ViewModelProvider;
 public class LobbyViewModel extends ViewModel implements BluetoothDiscoveryService.BluetoothDiscoveryListener,
         OnBluetoothConnectionServiceListener {
     private BluetoothDiscoveryService mDiscoveryService;
-    private TickTackBluetoothService mBluetoothService;
+    private TickTackBluetoothService mBluetoothService = TickTackBluetoothService.getInstance();
 
     private MutableLiveData<Boolean> isDiscovering = new MutableLiveData<>();
 
@@ -40,9 +40,6 @@ public class LobbyViewModel extends ViewModel implements BluetoothDiscoveryServi
     private LobbyViewModel(Context context) {
         mDiscoveryService = new BluetoothDiscoveryService();
         mDiscoveryService.discoverDevices(context, this);
-        mBluetoothService = TickTackBluetoothService.getInstance();
-        mBluetoothService.addConnectionListener(this);
-        mBluetoothService.start();
     }
 
     public LiveData<Boolean> getIsDiscovering() {
@@ -111,6 +108,8 @@ public class LobbyViewModel extends ViewModel implements BluetoothDiscoveryServi
 
     public void connectToDevice(DeviceInList device) {
         if (!(device instanceof DeviceInList.FakeDevice)) {
+            mBluetoothService.addConnectionListener(this);
+            mBluetoothService.start();
             mBluetoothService.connect(device.getAddress());
         } else {
             onConnectedTo(device.getName(), true);

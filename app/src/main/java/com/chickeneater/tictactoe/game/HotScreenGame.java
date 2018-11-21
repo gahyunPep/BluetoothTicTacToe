@@ -3,8 +3,9 @@ package com.chickeneater.tictactoe.game;
 import androidx.annotation.NonNull;
 
 public class HotScreenGame extends AbstractGame {
-    public HotScreenGame(@NonNull OnGameEventListener onGameEventListener) {
+    public HotScreenGame(String playerName, @NonNull OnGameEventListener onGameEventListener) {
         super(onGameEventListener);
+        onGameEventListener.onGameStarted(playerName);
     }
 
     @Override

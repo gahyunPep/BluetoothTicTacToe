@@ -1,5 +1,6 @@
 package com.chickeneater.tictactoe.game;
 
+import com.chickeneater.tictactoe.core.data.OnBluetoothConnectionServiceListener;
 import com.chickeneater.tictactoe.core.data.OnMessageReceivedListener;
 import com.chickeneater.tictactoe.core.data.TickTackBluetoothService;
 
@@ -11,8 +12,9 @@ import static com.chickeneater.tictactoe.game.GameBoard.EMPTY;
  * Created by romanlee on 11/17/18.
  * To the power of Love
  */
-public class MultiPlayerGame extends AbstractGame implements OnMessageReceivedListener {
+public class MultiPlayerGame extends AbstractGame implements OnMessageReceivedListener, OnBluetoothConnectionServiceListener {
     private boolean mCanMakeMove;
+    private final boolean mIsHost;
     private TickTackBluetoothService mBluetoothService = TickTackBluetoothService.getInstance();
 
     public MultiPlayerGame(@NonNull OnGameEventListener onGameEventListener, boolean isHost) {
@@ -20,10 +22,16 @@ public class MultiPlayerGame extends AbstractGame implements OnMessageReceivedLi
         mBluetoothService.addMessageReceivedListener(this);
         mCanMakeMove = isHost;
         mIsCross = isHost;
+        mIsHost = isHost;
+        if (isHost) {
+            mBluetoothService.start();
+            mBluetoothService.addConnectionListener(this);
+        }
     }
 
     public void clean() {
         mBluetoothService.removeMessageReceivedListener(this);
+        mBluetoothService.removeConnectionListener(this);
         mBluetoothService.disconnect();
     }
 
@@ -32,7 +40,7 @@ public class MultiPlayerGame extends AbstractGame implements OnMessageReceivedLi
         String[] messageXY = message.split(" ");
         int x = Integer.parseInt(messageXY[0]);
         int y = Integer.parseInt(messageXY[1]);
-        if (isCurrentPlayerCross()) {
+        if (mIsHost) {
             mBoard.setNought(x, y);
         } else {
             mBoard.setCross(x, y);
@@ -59,8 +67,27 @@ public class MultiPlayerGame extends AbstractGame implements OnMessageReceivedLi
     }
 
     @Override
+    public boolean isCurrentPlayerCross() {
+        if (mIsHost) {
+            return mCanMakeMove;
+        } else {
+            return !mCanMakeMove;
+        }
+    }
+
+    @Override
     public void makeMove(int x, int y) {
         super.makeMove(x, y);
         mBluetoothService.write(x + " " + y);
+    }
+
+    @Override
+    public void onConnectedTo(String deviceName, boolean asHost) {
+        mOnGameEventListener.onGameStarted(deviceName);
+    }
+
+    @Override
+    public void onConnectionFailed() {
+
     }
 }

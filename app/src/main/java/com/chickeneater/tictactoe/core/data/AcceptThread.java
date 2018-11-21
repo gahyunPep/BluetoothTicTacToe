@@ -67,7 +67,7 @@ class AcceptThread extends Thread {
                         case TickTackBluetoothService.STATE_LISTEN:
                         case TickTackBluetoothService.STATE_CONNECTING:
                             // Situation normal. Start the connected thread.
-                            mService.connected(socket, socket.getRemoteDevice(), false);
+                            mService.connected(socket, socket.getRemoteDevice(), true);
                             break;
                         case TickTackBluetoothService.STATE_NONE:
                         case TickTackBluetoothService.STATE_CONNECTED:

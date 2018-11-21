@@ -8,16 +8,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chickeneater.tictactoe.game.GameBoard;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+
+import static com.chickeneater.tictactoe.core.android.LocationAndDiscoverabilityUtils.becameDiscoverable;
+import static com.chickeneater.tictactoe.core.android.LocationAndDiscoverabilityUtils.isLocationPermissionGranted;
+import static com.chickeneater.tictactoe.core.android.LocationAndDiscoverabilityUtils.requestLocationPermissionIfNeed;
 
 public class GameActivity extends AppCompatActivity {
     public static final String GAME_MODE = "game_mode";
@@ -40,8 +46,8 @@ public class GameActivity extends AppCompatActivity {
     private TextView player1Score;
     private TextView player2Score;
 
-    private int gameMode;
-    private boolean isHost;
+    private int mGameMode;
+    private boolean mIsHost;
 
     public static void startMultiPlayerPlayerGame(Context packageContext, boolean asHost) {
         Intent intent = new Intent(packageContext, GameActivity.class);
@@ -60,9 +66,15 @@ public class GameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        gameMode = getIntent().getIntExtra(GAME_MODE, SINGLEPLAYER);
-        isHost = getIntent().getBooleanExtra(IS_HOST, true);
-        ViewModelProvider.Factory factory = new GameViewModel.Factory(gameMode, isHost);
+        mGameMode = getIntent().getIntExtra(GAME_MODE, SINGLEPLAYER);
+        mIsHost = getIntent().getBooleanExtra(IS_HOST, false);
+        if (mGameMode == MULTIPLAYER && mIsHost) {
+            if (savedInstanceState == null && requestLocationPermissionIfNeed(this)) {
+                becameDiscoverable(this);
+            }
+        }
+
+        ViewModelProvider.Factory factory = new GameViewModel.Factory(mGameMode, mIsHost);
         gameViewModel = ViewModelProviders.of(this, factory).get(GameViewModel.class);
         player1MoveIndicator = findViewById(R.id.player1moveindicator);
         player2MoveIndicator = findViewById(R.id.player2moveindicator);
@@ -91,6 +103,7 @@ public class GameActivity extends AppCompatActivity {
             }
         });
 
+        //TODO @Nithil EventObserver
         gameViewModel.getWinnerState().observe(this, new Observer<Integer>() {
             @Override
             public void onChanged(Integer winner) {
@@ -113,8 +126,20 @@ public class GameActivity extends AppCompatActivity {
         });
     }
 
-    public void onPlayerWon(int winner) {
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (isLocationPermissionGranted(requestCode, grantResults)) {
+            becameDiscoverable(this);
+        } else {
+            //TODO @Gahuyn change it to the meaningful text and extract resources
+            Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show();
+        }
+    }
 
+    public void onPlayerWon(int winner) {
+        //TODO @Gahyun if mGameMode is Multiplayer and player is host and cross are won save to shared preff wins.
+        //TODO @Gahyun if NOUGHT won save loss. if draw save as Draw.
+        //TODO @Nithil write normal strings and extract to string resources
         switch (winner) {
             case GameBoard.CROSS:
                 winnerDialog("Player 1 Won");
@@ -166,15 +191,16 @@ public class GameActivity extends AppCompatActivity {
     private void winnerDialog(String winnerMessage) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 this);
-
+        //TODO @Nithil write normal strings and extract to string resources
         alertDialogBuilder.setTitle("Result");
 
         alertDialogBuilder
                 .setMessage(winnerMessage)
                 .setCancelable(false)
+                //TODO @Nithil remove it
                 .setPositiveButton("Play Again", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        gameViewModel.startGame(gameMode, isHost);
+                        gameViewModel.startGame(mGameMode, mIsHost);
                     }
                 })
                 .setNegativeButton("Exit", new DialogInterface.OnClickListener() {

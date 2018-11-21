@@ -68,7 +68,7 @@ class ConnectThread extends Thread {
         }
 
         // Start the connected thread
-        mService.connected(mmSocket, mmDevice, true);
+        mService.connected(mmSocket, mmDevice, false);
     }
 
     public void cancel() {

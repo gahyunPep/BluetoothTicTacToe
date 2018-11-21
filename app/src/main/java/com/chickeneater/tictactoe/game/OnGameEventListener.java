@@ -1,6 +1,7 @@
 package com.chickeneater.tictactoe.game;
 
 public interface OnGameEventListener {
+    void onGameStarted(String playerName);
 
     void onMoveMade(); //call this after each move
 

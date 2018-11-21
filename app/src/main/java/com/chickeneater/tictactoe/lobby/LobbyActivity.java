@@ -1,9 +1,5 @@
 package com.chickeneater.tictactoe.lobby;
 
-import android.Manifest;
-import android.bluetooth.BluetoothAdapter;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,17 +16,16 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
+import static com.chickeneater.tictactoe.core.android.LocationAndDiscoverabilityUtils.isLocationPermissionGranted;
+import static com.chickeneater.tictactoe.core.android.LocationAndDiscoverabilityUtils.requestLocationPermissionIfNeed;
+
 
 public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerViewAdapter.OnDeviceSelectedListener {
     private DevicesRecyclerViewAdapter mAdapter;
-    private static final int DISCOVERABILITY_TIME = 20;
-    private static final int PERMISSION_REQUEST_LOCATION = 303;
     private LobbyViewModel mViewModel;
     private ProgressBar mScanProgressBar;
     private TextView mScanTxt;
@@ -42,7 +37,6 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        requestLocationPermission(savedInstanceState);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lobby);
         mScanProgressBar = findViewById(R.id.rescanProgressbar);
@@ -50,6 +44,10 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
         mConnectTxt = findViewById(R.id.connectTextView);
         setupList();
         setupToolbar();
+
+        if (savedInstanceState == null) {
+            requestLocationPermissionIfNeed(this);
+        }
 
         mViewModel = ViewModelProviders.of(this, new LobbyViewModel.Factory(this)).get(LobbyViewModel.class);
 
@@ -108,7 +106,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                if(item.getItemId() == R.id.menu_scan){
+                if (item.getItemId() == R.id.menu_scan) {
                     restartScan();
                     return true;
                 }
@@ -118,7 +116,6 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
     }
 
     private void restartScan() {
-        becameDiscoverable();
         mViewModel.restartDiscovery(this);
     }
 
@@ -134,43 +131,19 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
 
     //method clicks and gets phone name and address and return it
     private void connectToDevice(DeviceInList device) {
-        //TODO Gahyun show progress bar, and restrict user from clicking again
         mScanProgressBar.setVisibility(View.VISIBLE);
         mConnectTxt.setVisibility(View.VISIBLE);
         mDevicesRecyclerView.setVisibility(View.INVISIBLE);
         mViewModel.connectToDevice(device);
     }
 
-
-    private void becameDiscoverable() {
-        Intent discoverableIntent =
-                new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, DISCOVERABILITY_TIME);
-        startActivity(discoverableIntent);
-    }
-
-    private void requestLocationPermission(Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        PERMISSION_REQUEST_LOCATION);
-            } else {
-                    becameDiscoverable();
-            }
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSION_REQUEST_LOCATION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    becameDiscoverable();
-            } else {
-                Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show();
-            }
+        if (isLocationPermissionGranted(requestCode, grantResults)) {
+            mViewModel.restartDiscovery(this);
+        } else {
+            //TODO @Gahuyn change it to the meaningful text and extract resources
+            Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show();
         }
     }
-
 }

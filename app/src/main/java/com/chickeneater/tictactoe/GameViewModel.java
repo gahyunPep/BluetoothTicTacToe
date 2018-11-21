@@ -19,6 +19,7 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
     private Game mStrategy;
     public static final int DRAW = 3;
     private MutableLiveData<List<List<Integer>>> cellsListoflists = new MutableLiveData<>();
+    //Use Event<Integer>
     private MutableLiveData<Integer> winnerState = new MutableLiveData<>();
     private MutableLiveData<Integer> player1Score = new MutableLiveData<>();
     private MutableLiveData<Integer> player2Score = new MutableLiveData<>();
@@ -52,6 +53,11 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
 
     public LiveData<Integer> getWinnerState() {
         return winnerState;
+    }
+
+    @Override
+    public void onGameStarted(String playerName) {
+        //TODO @Nithil remove connection loader (live data) you can show oponent name here
     }
 
     @Override
@@ -94,12 +100,13 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
     }
 
     public boolean isCurrentPlayerCross() {
-        return mStrategy.canMakeMove();
+        return mStrategy.isCurrentPlayerCross();
     }
 
     public void startGame(int gameMode, boolean isHost) {
+        //TODO @Nithil start connection loader (live data)
         if (gameMode == GameActivity.SINGLEPLAYER) {
-            mStrategy = new HotScreenGame(this);
+            mStrategy = new HotScreenGame("Player 2",this);
         } else if (gameMode == GameActivity.MULTIPLAYER) {
             mStrategy = new MultiPlayerGame(this, isHost);
         }

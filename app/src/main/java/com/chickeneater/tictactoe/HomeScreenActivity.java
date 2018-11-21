@@ -40,7 +40,7 @@ public class HomeScreenActivity extends AppCompatActivity {
                 SharedPreferences.Editor prefsEditor = prefs.edit();
                 prefsEditor.putString(NAME, name);
                 prefsEditor.apply();
-                startActivity(new Intent(HomeScreenActivity.this, LobbyActivity.class));
+                GameActivity.startMultiPlayerPlayerGame(v.getContext(), true);
             }
         });
 
@@ -54,14 +54,14 @@ public class HomeScreenActivity extends AppCompatActivity {
         deviceMultiplayerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               GameActivity.startSinglePlayerPlayerGame(v.getContext());
+                GameActivity.startSinglePlayerPlayerGame(v.getContext());
             }
         });
 
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GameActivity.startMultiPlayerPlayerGame(v.getContext(), false);
+                startActivity(new Intent(HomeScreenActivity.this, LobbyActivity.class));
             }
         });
     }
