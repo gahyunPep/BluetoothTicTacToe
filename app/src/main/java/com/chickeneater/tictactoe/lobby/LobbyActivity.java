@@ -1,5 +1,7 @@
 package com.chickeneater.tictactoe.lobby;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -88,8 +90,22 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
             @Override
             public void onEventHappened(Void value) {
                 //TODO @Gahuyn show message that connection failed and give user opportunity to click again
+                connectionFailedDialog();
             }
         });
+    }
+
+    private void connectionFailedDialog() {
+        String message = getString(R.string.connection_fail_message);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle(R.string.connection_fail_title);
+        alertDialogBuilder.setMessage(message).setCancelable(false).
+                setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+
     }
 
     private void setupList() {
@@ -114,6 +130,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
             }
         });
     }
+
 
     private void restartScan() {
         mViewModel.restartDiscovery(this);

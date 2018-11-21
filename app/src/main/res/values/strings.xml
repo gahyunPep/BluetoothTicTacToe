@@ -17,4 +17,7 @@
     <string name="toolbarTitle">Devices</string>
     <string name="scan">SCAN</string>
     <string name="waitingToConnect">Waiting for Opponent to connect...</string>
+    <string name="connection_fail_message">Device is disconnected. Please connect and restart the game.</string>
+    <string name="connection_fail_title">Oops...</string>
+    <string name="ok">OK</string>
 </resources>
