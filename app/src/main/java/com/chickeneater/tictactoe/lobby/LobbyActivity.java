@@ -121,7 +121,6 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
 
     private void displayDevices(List<DeviceInList> devices) {
         mAdapter.submitList(devices);
-        mDevicesRecyclerView.scrollToPosition(0);
     }
 
     @Override
