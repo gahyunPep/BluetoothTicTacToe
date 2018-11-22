@@ -20,4 +20,7 @@
     <string name="connection_fail_message">Device is disconnected. Please connect and restart the game.</string>
     <string name="connection_fail_title">Oops...</string>
     <string name="ok">OK</string>
+    <string name="location_reject_title">ARE YOU SURE???</string>
+    <string name="location_reject_message">To play our awesome TicTacToe we need your location permission.  Let me give you one more chance!</string>
+    <string name="no_thanks">NO THANKS</string>
 </resources>

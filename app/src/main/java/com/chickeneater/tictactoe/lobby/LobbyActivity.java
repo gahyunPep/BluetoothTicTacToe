@@ -2,6 +2,7 @@ package com.chickeneater.tictactoe.lobby;
 
 import androidx.appcompat.app.AlertDialog;
 //import android.content.DialogInterface;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -112,6 +113,27 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
         dialog.show();
     }
 
+    //TODO @Gahyun Consider screen rotation and understand savedInstanceState
+    private void locationPermissionRejectedDialog(final Activity activity){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.location_reject_title))
+                .setMessage(getString(R.string.location_reject_message))
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        requestLocationPermissionIfNeed(activity);
+                    }
+                })
+                .setNegativeButton(R.string.no_thanks, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     private void setupList() {
         mDevicesRecyclerView = findViewById(R.id.devicesRecyclerView);
         mAdapter = new DevicesRecyclerViewAdapter(new DevicesDifUtils());
@@ -163,7 +185,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
             mViewModel.restartDiscovery(this);
         } else {
             //TODO @Gahuyn change it to the meaningful text and extract resources
-            Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show();
+            locationPermissionRejectedDialog(this);
         }
     }
 }
