@@ -1,6 +1,7 @@
 package com.chickeneater.tictactoe.lobby;
 
-import android.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
+//import android.content.DialogInterface;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -47,6 +48,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
         setupList();
         setupToolbar();
 
+
         if (savedInstanceState == null) {
             requestLocationPermissionIfNeed(this);
         }
@@ -89,23 +91,25 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
 
             @Override
             public void onEventHappened(Void value) {
-                //TODO @Gahuyn show message that connection failed and give user opportunity to click again
                 connectionFailedDialog();
             }
         });
+
+
     }
 
     private void connectionFailedDialog() {
         String message = getString(R.string.connection_fail_message);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle(R.string.connection_fail_title);
-        alertDialogBuilder.setMessage(message).setCancelable(false).
-                setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setMessage(message).setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 });
-
+        AlertDialog dialog = alertDialogBuilder.create();
+        dialog.show();
     }
 
     private void setupList() {
