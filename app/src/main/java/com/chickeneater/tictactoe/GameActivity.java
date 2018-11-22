@@ -3,6 +3,7 @@ package com.chickeneater.tictactoe;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -140,6 +141,9 @@ public class GameActivity extends AppCompatActivity {
         //TODO @Gahyun if mGameMode is Multiplayer and player is host and cross are won save to shared preff wins.
         //TODO @Gahyun if NOUGHT won save loss. if draw save as Draw.
         //TODO @Nithil write normal strings and extract to string resources
+        Stats mPlayerStats = new Stats();
+        SharedPreferences sharedPre = this.getSharedPreferences("Player",Context.MODE_PRIVATE);
+
         switch (winner) {
             case GameBoard.CROSS:
                 winnerDialog("Player 1 Won");
@@ -153,11 +157,11 @@ public class GameActivity extends AppCompatActivity {
         }
 
         if(mGameMode == MULTIPLAYER && mIsHost && winner == GameBoard.CROSS){
-
-        }else if(mGameMode == MULTIPLAYER && mIsHost && winner == GameBoard.CROSS){
-
+            mPlayerStats.updateWin(sharedPre);
+        }else if(mGameMode == MULTIPLAYER && mIsHost && winner == GameBoard.NOUGHT){
+            mPlayerStats.updateLoss(sharedPre);
         }else{
-
+            mPlayerStats.updateDraw(sharedPre);
         }
     }
 
