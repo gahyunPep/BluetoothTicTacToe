@@ -142,7 +142,7 @@ public class GameActivity extends AppCompatActivity {
         //TODO @Gahyun if NOUGHT won save loss. if draw save as Draw.
         //TODO @Nithil write normal strings and extract to string resources
         Stats mPlayerStats = new Stats();
-        SharedPreferences sharedPre = this.getSharedPreferences("Player",Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = this.getSharedPreferences("Player",Context.MODE_PRIVATE);
 
         switch (winner) {
             case GameBoard.CROSS:
@@ -157,11 +157,11 @@ public class GameActivity extends AppCompatActivity {
         }
 
         if(mGameMode == MULTIPLAYER && mIsHost && winner == GameBoard.CROSS){
-            mPlayerStats.updateWin(sharedPre);
+            mPlayerStats.updateWin(sharedPref);
         }else if(mGameMode == MULTIPLAYER && mIsHost && winner == GameBoard.NOUGHT){
-            mPlayerStats.updateLoss(sharedPre);
+            mPlayerStats.updateLoss(sharedPref);
         }else{
-            mPlayerStats.updateDraw(sharedPre);
+            mPlayerStats.updateDraw(sharedPref);
         }
     }
 
