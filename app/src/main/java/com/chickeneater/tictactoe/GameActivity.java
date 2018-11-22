@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.chickeneater.tictactoe.game.GameBoard;
 
@@ -24,6 +23,8 @@ import androidx.lifecycle.ViewModelProviders;
 import static com.chickeneater.tictactoe.core.android.LocationAndDiscoverabilityUtils.becameDiscoverable;
 import static com.chickeneater.tictactoe.core.android.LocationAndDiscoverabilityUtils.isLocationPermissionGranted;
 import static com.chickeneater.tictactoe.core.android.LocationAndDiscoverabilityUtils.requestLocationPermissionIfNeed;
+import static com.chickeneater.tictactoe.core.android.LocationAndDiscoverabilityUtils.locationPermissionRejectedDialog;
+
 
 public class GameActivity extends AppCompatActivity {
     public static final String GAME_MODE = "game_mode";
@@ -131,8 +132,7 @@ public class GameActivity extends AppCompatActivity {
         if (isLocationPermissionGranted(requestCode, grantResults)) {
             becameDiscoverable(this);
         } else {
-            //TODO @Gahuyn change it to the meaningful text and extract resources
-            Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show();
+            locationPermissionRejectedDialog(this);
         }
     }
 

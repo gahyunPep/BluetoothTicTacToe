@@ -3,10 +3,14 @@ package com.chickeneater.tictactoe.core.android;
 import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 
+import com.chickeneater.tictactoe.R;
+
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -41,5 +45,27 @@ public class LocationAndDiscoverabilityUtils {
             return grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
         }
         return false;
+    }
+
+    //TODO @Gahyun Consider screen rotation and understand savedInstanceState
+    //TODO Rokanank doesn't like passing activity to requestLocationPermissionIfNeed
+    public static void locationPermissionRejectedDialog(final Activity activity){
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle(activity.getString(R.string.location_reject_title))
+                .setMessage(activity.getString(R.string.location_reject_message))
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        requestLocationPermissionIfNeed(activity);
+                    }
+                })
+                .setNegativeButton(R.string.no_thanks, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

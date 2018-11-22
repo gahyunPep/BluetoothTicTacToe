@@ -1,15 +1,11 @@
 package com.chickeneater.tictactoe.lobby;
 
-import androidx.appcompat.app.AlertDialog;
-//import android.content.DialogInterface;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.chickeneater.tictactoe.GameActivity;
 import com.chickeneater.tictactoe.R;
@@ -18,6 +14,7 @@ import com.chickeneater.tictactoe.core.ui.EventObserver;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
@@ -25,6 +22,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static com.chickeneater.tictactoe.core.android.LocationAndDiscoverabilityUtils.isLocationPermissionGranted;
+import static com.chickeneater.tictactoe.core.android.LocationAndDiscoverabilityUtils.locationPermissionRejectedDialog;
 import static com.chickeneater.tictactoe.core.android.LocationAndDiscoverabilityUtils.requestLocationPermissionIfNeed;
 
 
@@ -113,26 +111,6 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
         dialog.show();
     }
 
-    //TODO @Gahyun Consider screen rotation and understand savedInstanceState
-    private void locationPermissionRejectedDialog(final Activity activity){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.location_reject_title))
-                .setMessage(getString(R.string.location_reject_message))
-                .setCancelable(false)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        requestLocationPermissionIfNeed(activity);
-                    }
-                })
-                .setNegativeButton(R.string.no_thanks, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
 
     private void setupList() {
         mDevicesRecyclerView = findViewById(R.id.devicesRecyclerView);
@@ -184,7 +162,6 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
         if (isLocationPermissionGranted(requestCode, grantResults)) {
             mViewModel.restartDiscovery(this);
         } else {
-            //TODO @Gahuyn change it to the meaningful text and extract resources
             locationPermissionRejectedDialog(this);
         }
     }
