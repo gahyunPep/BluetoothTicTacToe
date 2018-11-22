@@ -21,11 +21,10 @@ public class StatsActivity extends AppCompatActivity {
 
 
         SharedPreferences sharedPref = this.getSharedPreferences("Player",Context.MODE_PRIVATE);
-        Stats mPlayerStats = new Stats();
 
-        winTxt.setText(String.valueOf(mPlayerStats.getWin(sharedPref)));
-        lossTxt.setText(String.valueOf(mPlayerStats.getLoss(sharedPref)));
-        drawTxt.setText(String.valueOf(mPlayerStats.getDraw(sharedPref)));
+        winTxt.setText(String.valueOf(Stats.getWin(sharedPref)));
+        lossTxt.setText(String.valueOf(Stats.getLoss(sharedPref)));
+        drawTxt.setText(String.valueOf(Stats.getDraw(sharedPref)));
 
     }
 }

@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.chickeneater.tictactoe.game.Game;
 import com.chickeneater.tictactoe.game.GameBoard;
 
 import java.util.List;
@@ -138,12 +139,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void onPlayerWon(int winner) {
-        //TODO @Gahyun if mGameMode is Multiplayer and player is host and cross are won save to shared preff wins.
-        //TODO @Gahyun if NOUGHT won save loss. if draw save as Draw.
         //TODO @Nithil write normal strings and extract to string resources
-        Stats mPlayerStats = new Stats();
-        SharedPreferences sharedPref = this.getSharedPreferences("Player",Context.MODE_PRIVATE);
-
         switch (winner) {
             case GameBoard.CROSS:
                 winnerDialog("Player 1 Won");
@@ -155,13 +151,34 @@ public class GameActivity extends AppCompatActivity {
                 winnerDialog("It is a draw");
                 break;
         }
+        saveStats(winner);
+    }
 
-        if(mGameMode == MULTIPLAYER && mIsHost && winner == GameBoard.CROSS){
-            mPlayerStats.updateWin(sharedPref);
-        }else if(mGameMode == MULTIPLAYER && mIsHost && winner == GameBoard.NOUGHT){
-            mPlayerStats.updateLoss(sharedPref);
-        }else{
-            mPlayerStats.updateDraw(sharedPref);
+    private void saveStats(int winner) {
+        if (mGameMode != MULTIPLAYER) {
+            return;
+        }
+
+        //TODO make this pretty
+        SharedPreferences sharedPref = this.getSharedPreferences("Player", Context.MODE_PRIVATE);
+        switch (winner) {
+            case GameBoard.CROSS:
+                if (mIsHost) {
+                    Stats.updateWin(sharedPref);
+                } else {
+                    Stats.updateLoss(sharedPref);
+                }
+                break;
+            case GameBoard.NOUGHT:
+                if (mIsHost) {
+                    Stats.updateLoss(sharedPref);
+                } else {
+                    Stats.updateWin(sharedPref);
+                }
+                break;
+            case GameBoard.DRAW:
+                Stats.updateDraw(sharedPref);
+                break;
         }
     }
 
