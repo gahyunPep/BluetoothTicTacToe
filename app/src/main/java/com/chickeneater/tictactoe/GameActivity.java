@@ -144,13 +144,20 @@ public class GameActivity extends AppCompatActivity {
             case GameBoard.CROSS:
                 winnerDialog("Player 1 Won");
                 break;
-
             case GameBoard.NOUGHT:
                 winnerDialog("Player 2 Won");
                 break;
             case GameViewModel.DRAW:
                 winnerDialog("It is a draw");
                 break;
+        }
+
+        if(mGameMode == MULTIPLAYER && mIsHost && winner == GameBoard.CROSS){
+
+        }else if(mGameMode == MULTIPLAYER && mIsHost && winner == GameBoard.CROSS){
+
+        }else{
+
         }
     }
 

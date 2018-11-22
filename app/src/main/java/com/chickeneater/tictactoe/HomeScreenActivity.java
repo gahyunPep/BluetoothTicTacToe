@@ -21,6 +21,9 @@ public class HomeScreenActivity extends AppCompatActivity {
     Button deviceMultiplayerButton;
     TextInputEditText nameInput;
     public final static String NAME = "Name";
+    public final static String WIN = "Win";
+    public final static String LOSS = "Loss";
+    public final static String DRAW = "Draw";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
