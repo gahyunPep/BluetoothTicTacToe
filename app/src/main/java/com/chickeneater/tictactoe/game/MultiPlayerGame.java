@@ -32,7 +32,7 @@ public class MultiPlayerGame extends AbstractGame implements OnMessageReceivedLi
     public void clean() {
         mBluetoothService.removeMessageReceivedListener(this);
         mBluetoothService.removeConnectionListener(this);
-        mBluetoothService.disconnect();
+        mBluetoothService.stop();
     }
 
     @Override
