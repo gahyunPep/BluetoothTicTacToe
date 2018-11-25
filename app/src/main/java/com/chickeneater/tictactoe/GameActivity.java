@@ -270,7 +270,7 @@ public class GameActivity extends AppCompatActivity {
                 .setMessage(winnerMessage)
                 .setCancelable(false);
 
-        if (mGameMode == MULTIPLAYER) {
+        if (mGameMode == SINGLEPLAYER) {
             alertDialogBuilder.setPositiveButton(getString(R.string.play_again), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     gameViewModel.startGame(mGameMode, mIsHost);
