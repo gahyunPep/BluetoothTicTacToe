@@ -35,9 +35,6 @@ public class HomeScreenActivity extends AppCompatActivity {
         joinButton = findViewById(R.id.joinBluetoothButton);
         deviceMultiplayerButton = findViewById(R.id.deviceMultiplayerButton);
         final Stats stats = new Stats(this);
-
-
-        Stats stats = new Stats(this);
         nameInput.setText(stats.getName());
 
         hostButton.setOnClickListener(new View.OnClickListener() {

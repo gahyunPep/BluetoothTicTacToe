@@ -260,7 +260,7 @@ public class GameActivity extends AppCompatActivity {
                 String player2Name = player2TextView.getText().toString();
                 winnerDialog(getString(R.string.winner_message, player2Name));
                 break;
-            case GameViewModel.DRAW:
+            case GameBoard.DRAW:
                 winnerDialog(getString(R.string.game_draw));
                 break;
         }

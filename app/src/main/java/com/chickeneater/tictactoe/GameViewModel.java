@@ -19,7 +19,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 public class GameViewModel extends ViewModel implements OnGameEventListener {
     private Game mStrategy;
-    public static final int DRAW = 3;
     private MutableLiveData<List<List<Integer>>> cellsListoflists = new MutableLiveData<>();
     //Use Event<Integer>
     private MutableLiveData<Boolean> locationPermissionDenied = new MutableLiveData<>();
@@ -115,7 +114,7 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
 
     @Override
     public void onDraw() {
-        winnerState.setValue(new Event<>(DRAW));
+        winnerState.setValue(new Event<>(GameBoard.DRAW));
     }
 
     public void makeMove(int x, int y) {
