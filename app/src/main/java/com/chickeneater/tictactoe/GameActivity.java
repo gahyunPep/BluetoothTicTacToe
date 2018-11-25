@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.chickeneater.tictactoe.core.ui.EventObserver;
@@ -50,6 +51,9 @@ public class GameActivity extends AppCompatActivity {
     private TextView player1Score;
     private TextView player2Score;
 
+    private TextView waitingTextView;
+    private ProgressBar waitingProgressBar;
+
     private int mGameMode;
     private boolean mIsHost;
 
@@ -86,6 +90,8 @@ public class GameActivity extends AppCompatActivity {
         player2MoveIndicator = findViewById(R.id.player2moveindicator);
         player1Score = findViewById(R.id.player1score);
         player2Score = findViewById(R.id.player2score);
+        waitingTextView = findViewById(R.id.waitingTextView);
+        waitingProgressBar = findViewById(R.id.waitingProgressBar);
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -136,6 +142,20 @@ public class GameActivity extends AppCompatActivity {
                 mDialog = locationPermissionRejectedDialog(GameActivity.this);
             }
         });
+
+        gameViewModel.getDisplayWaitingProgressBar().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if(aBoolean){
+                    waitingTextView.setVisibility(View.VISIBLE);
+                    waitingProgressBar.setVisibility(View.VISIBLE);
+                } else {
+                    waitingTextView.setVisibility(View.INVISIBLE);
+                    waitingProgressBar.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -164,7 +184,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void onPlayerWon(int winner) {
-        //TODO @Nithil write normal strings and extract to string resources
+
         switch (winner) {
             case GameBoard.CROSS:
                 winnerDialog(getString(R.string.game_player_1_won));
@@ -243,7 +263,7 @@ public class GameActivity extends AppCompatActivity {
     private void winnerDialog(String winnerMessage) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 this);
-        //TODO @Nithil write normal strings and extract to string resources
+
         alertDialogBuilder.setTitle(getString(R.string.result));
 
         alertDialogBuilder

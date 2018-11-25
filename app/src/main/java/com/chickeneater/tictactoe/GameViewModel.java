@@ -25,6 +25,7 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
     private MutableLiveData<Event<Integer>> winnerState = new MutableLiveData<>();
     private MutableLiveData<Integer> player1Score = new MutableLiveData<>();
     private MutableLiveData<Integer> player2Score = new MutableLiveData<>();
+    private MutableLiveData<Boolean> displayWaitingProgressBar = new MutableLiveData<>();
     private int playerOneWin = 0, playerTwoWin = 0;
 
 
@@ -63,9 +64,14 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
         return winnerState;
     }
 
+    public LiveData<Boolean> getDisplayWaitingProgressBar() {
+        return displayWaitingProgressBar;
+    }
+
     @Override
     public void onGameStarted(String playerName) {
         //TODO @Nithil remove connection loader (live data) you can show oponent name here
+        displayWaitingProgressBar.setValue(false);
     }
 
     @Override
@@ -116,8 +122,10 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
 
         if (gameMode == GameActivity.SINGLEPLAYER) {
             mStrategy = new HotScreenGame("Player 2",this);
+            displayWaitingProgressBar.setValue(false);
         } else if (gameMode == GameActivity.MULTIPLAYER) {
             mStrategy = new MultiPlayerGame(this, isHost);
+            displayWaitingProgressBar.setValue(true);
         }
         List<List<Integer>> initialBoard = new ArrayList<>();
 
