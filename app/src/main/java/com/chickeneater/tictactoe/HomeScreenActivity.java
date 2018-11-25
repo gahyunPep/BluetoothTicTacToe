@@ -34,11 +34,13 @@ public class HomeScreenActivity extends AppCompatActivity {
         nameInput = findViewById(R.id.inputName);
         joinButton = findViewById(R.id.joinBluetoothButton);
         deviceMultiplayerButton = findViewById(R.id.deviceMultiplayerButton);
+        final Stats stats = new Stats(this);
+
 
         hostButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveNameToSharedPreferences(v);
+                stats.setName(String.valueOf(nameInput.getText()));
                 GameActivity.startMultiPlayerPlayerGame(v.getContext(), true);
             }
         });
@@ -60,17 +62,10 @@ public class HomeScreenActivity extends AppCompatActivity {
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveNameToSharedPreferences(v);
+                stats.setName(String.valueOf(nameInput.getText()));
                 startActivity(new Intent(HomeScreenActivity.this, LobbyActivity.class));
             }
         });
     }
 
-    private void saveNameToSharedPreferences(View v) {
-        String name = String.valueOf(nameInput.getText());
-        SharedPreferences prefs = v.getContext().getSharedPreferences("Player", Context.MODE_PRIVATE);
-        SharedPreferences.Editor prefsEditor = prefs.edit();
-        prefsEditor.putString(NAME, name);
-        prefsEditor.apply();
-    }
 }

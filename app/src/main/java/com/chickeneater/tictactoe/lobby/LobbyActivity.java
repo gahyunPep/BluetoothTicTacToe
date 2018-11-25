@@ -98,7 +98,9 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
         mViewModel.getLocationPermissionDenied().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                mDialog = locationPermissionRejectedDialog(LobbyActivity.this);
+                if(aBoolean){
+                    mDialog = locationPermissionRejectedDialog(LobbyActivity.this);
+                }
             }
         });
 

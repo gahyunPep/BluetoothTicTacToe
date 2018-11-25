@@ -1,6 +1,7 @@
 package com.chickeneater.tictactoe;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import com.chickeneater.tictactoe.core.ui.EventObserver;
 import com.chickeneater.tictactoe.game.GameBoard;
+import com.chickeneater.tictactoe.lobby.LobbyActivity;
 
 import java.util.List;
 
@@ -177,7 +179,9 @@ public class GameActivity extends AppCompatActivity {
         gameViewModel.getLocationPermissionDenied().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                mDialog = locationPermissionRejectedDialog(GameActivity.this);
+                if(aBoolean){
+                    mDialog = locationPermissionRejectedDialog(GameActivity.this);
+                }
             }
         });
 

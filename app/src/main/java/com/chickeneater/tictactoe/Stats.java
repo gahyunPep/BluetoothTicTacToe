@@ -10,6 +10,12 @@ public class Stats {
         sharedPref = context.getSharedPreferences("Player", Context.MODE_PRIVATE);
     }
 
+    public void setName(String name){
+        sharedPref.edit()
+                .putString("Name", name)
+                .apply();
+    }
+
     public  String getName() {
         return sharedPref.getString("Name", "UnknownPlayer");
     }
