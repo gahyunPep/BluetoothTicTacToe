@@ -23,9 +23,9 @@
     <string name="location_reject_title">ARE YOU SURE???</string>
     <string name="location_reject_message">To play our awesome TicTacToe we need your location permission.  Let me give you one more chance!</string>
     <string name="no_thanks">NO THANKS</string>
-    <string name="game_player_1_won">Player 1 Won</string>
-    <string name="game_player_2_won">Player 2 Won</string>
-    <string name="game_draw">It is a draw</string>
+    <string name="game_player_1_won">Congratulations Player 1, you won!</string>
+    <string name="game_player_2_won">Congratulations Player 2, you won!</string>
+    <string name="game_draw">It is a draw, try again to see who is better ;)</string>
     <string name="result">Result</string>
     <string name="play_again">Play Again</string>
     <string name="exit">Exit</string>
