@@ -1,5 +1,6 @@
 package com.chickeneater.tictactoe;
 
+import com.chickeneater.tictactoe.core.ui.Event;
 import com.chickeneater.tictactoe.game.Game;
 import com.chickeneater.tictactoe.game.GameBoard;
 import com.chickeneater.tictactoe.game.HotScreenGame;
@@ -21,7 +22,7 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
     private MutableLiveData<List<List<Integer>>> cellsListoflists = new MutableLiveData<>();
     //Use Event<Integer>
     private MutableLiveData<Boolean> locationPermissionDenied = new MutableLiveData<>();
-    private MutableLiveData<Integer> winnerState = new MutableLiveData<>();
+    private MutableLiveData<Event<Integer>> winnerState = new MutableLiveData<>();
     private MutableLiveData<Integer> player1Score = new MutableLiveData<>();
     private MutableLiveData<Integer> player2Score = new MutableLiveData<>();
     private int playerOneWin = 0, playerTwoWin = 0;
@@ -58,7 +59,7 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
         return cellsListoflists;
     }
 
-    public LiveData<Integer> getWinnerState() {
+    public LiveData<Event<Integer>> getWinnerState() {
         return winnerState;
     }
 
@@ -91,13 +92,13 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
                 player2Score.setValue(++playerTwoWin);
                 break;
         }
-        winnerState.setValue(winner);
+        winnerState.setValue(new Event<>(winner));
 
     }
 
     @Override
     public void onDraw() {
-        winnerState.setValue(DRAW);
+        winnerState.setValue(new Event<>(DRAW));
     }
 
     public void makeMove(int x, int y) {

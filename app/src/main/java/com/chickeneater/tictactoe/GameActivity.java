@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.chickeneater.tictactoe.core.ui.EventObserver;
 import com.chickeneater.tictactoe.game.GameBoard;
 
 import java.util.List;
@@ -106,10 +107,9 @@ public class GameActivity extends AppCompatActivity {
             }
         });
 
-        //TODO @Nithil EventObserver
-        gameViewModel.getWinnerState().observe(this, new Observer<Integer>() {
+        gameViewModel.getWinnerState().observe(this, new EventObserver<Integer>() {
             @Override
-            public void onChanged(Integer winner) {
+            public void onEventHappened(Integer winner) {
                 onPlayerWon(winner);
             }
         });
