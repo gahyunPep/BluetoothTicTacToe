@@ -186,6 +186,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (isLocationPermissionGranted(requestCode, grantResults)) {
             mViewModel.restartDiscovery(this);
+            mViewModel.setLocationPermissionDenied(false);
         } else {
             mViewModel.setLocationPermissionDenied(true);
             mDialog = locationPermissionRejectedDialog(this);

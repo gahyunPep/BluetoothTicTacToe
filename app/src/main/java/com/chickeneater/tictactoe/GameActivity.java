@@ -244,6 +244,7 @@ public class GameActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (isLocationPermissionGranted(requestCode, grantResults)) {
             becameDiscoverable(this);
+            gameViewModel.setLocationPermissionDenied(false);
         } else {
             gameViewModel.setLocationPermissionDenied(true);
         }
