@@ -71,7 +71,7 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
 
     @Override
     public void onGameStarted(String playerName) {
-        //TODO @Nithil remove connection loader (live data) you can show oponent name here
+        //TODO @Nithil show oponent name here
         displayWaitingProgressBar.setValue(false);
     }
 
@@ -119,7 +119,6 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
     }
 
     public void startGame(int gameMode, boolean isHost) {
-        //TODO @Nithil start connection loader (live data)
 
         if (gameMode == GameActivity.SINGLEPLAYER) {
             mStrategy = new HotScreenGame("Player 2",this);

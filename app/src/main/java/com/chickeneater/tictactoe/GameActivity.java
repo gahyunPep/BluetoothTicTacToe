@@ -146,7 +146,7 @@ public class GameActivity extends AppCompatActivity {
         gameViewModel.getDisplayWaitingProgressBar().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                if(aBoolean){
+                if (aBoolean) {
                     waitingTextView.setVisibility(View.VISIBLE);
                     waitingProgressBar.setVisibility(View.VISIBLE);
                 } else {
@@ -268,18 +268,21 @@ public class GameActivity extends AppCompatActivity {
 
         alertDialogBuilder
                 .setMessage(winnerMessage)
-                .setCancelable(false)
-                //TODO @Nithil remove it
-                .setPositiveButton(getString(R.string.play_again), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        gameViewModel.startGame(mGameMode, mIsHost);
-                    }
-                })
-                .setNegativeButton(getString(R.string.exit), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        GameActivity.this.finish();
-                    }
-                });
+                .setCancelable(false);
+
+        if (mGameMode == MULTIPLAYER) {
+            alertDialogBuilder.setPositiveButton(getString(R.string.play_again), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    gameViewModel.startGame(mGameMode, mIsHost);
+                }
+            });
+        }
+
+        alertDialogBuilder.setNegativeButton(getString(R.string.exit), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                GameActivity.this.finish();
+            }
+        });
 
         AlertDialog alertDialog = alertDialogBuilder.create();
 
