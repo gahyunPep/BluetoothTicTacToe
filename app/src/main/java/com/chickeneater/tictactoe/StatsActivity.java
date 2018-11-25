@@ -20,11 +20,10 @@ public class StatsActivity extends AppCompatActivity {
         drawTxt = findViewById(R.id.textView6);
 
 
-        SharedPreferences sharedPref = this.getSharedPreferences("Player",Context.MODE_PRIVATE);
-
-        winTxt.setText(String.valueOf(Stats.getWin(sharedPref)));
-        lossTxt.setText(String.valueOf(Stats.getLoss(sharedPref)));
-        drawTxt.setText(String.valueOf(Stats.getDraw(sharedPref)));
+        Stats stats = new Stats(this);
+        winTxt.setText(String.valueOf(stats.getWin()));
+        lossTxt.setText(String.valueOf(stats.getLoss()));
+        drawTxt.setText(String.valueOf(stats.getDraw()));
 
     }
 }

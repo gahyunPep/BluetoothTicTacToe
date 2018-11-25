@@ -184,25 +184,24 @@ public class GameActivity extends AppCompatActivity {
             return;
         }
 
-        //TODO make this pretty
-        SharedPreferences sharedPref = this.getSharedPreferences("Player", Context.MODE_PRIVATE);
+        Stats stats = new Stats(this);
         switch (winner) {
             case GameBoard.CROSS:
                 if (mIsHost) {
-                    Stats.updateWin(sharedPref);
+                    stats.updateWin();
                 } else {
-                    Stats.updateLoss(sharedPref);
+                    stats.updateLoss();
                 }
                 break;
             case GameBoard.NOUGHT:
                 if (mIsHost) {
-                    Stats.updateLoss(sharedPref);
+                    stats.updateLoss();
                 } else {
-                    Stats.updateWin(sharedPref);
+                    stats.updateWin();
                 }
                 break;
             case GameBoard.DRAW:
-                Stats.updateDraw(sharedPref);
+                stats.updateDraw();
                 break;
         }
     }
