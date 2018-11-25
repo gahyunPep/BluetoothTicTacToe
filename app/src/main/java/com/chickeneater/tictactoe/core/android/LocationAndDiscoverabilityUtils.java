@@ -48,7 +48,7 @@ public class LocationAndDiscoverabilityUtils {
     }
 
     //TODO Rokanank doesn't like passing activity to requestLocationPermissionIfNeed
-    public static void locationPermissionRejectedDialog(final Activity activity){
+    public static AlertDialog locationPermissionRejectedDialog(final Activity activity){
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(activity.getString(R.string.location_reject_title))
                 .setMessage(activity.getString(R.string.location_reject_message))
@@ -66,5 +66,13 @@ public class LocationAndDiscoverabilityUtils {
                 });
         AlertDialog dialog = builder.create();
         dialog.show();
+
+        return dialog;
+    }
+
+    public static void dismissSafely(AlertDialog dialog) {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
     }
 }

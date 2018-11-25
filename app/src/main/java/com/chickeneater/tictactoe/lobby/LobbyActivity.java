@@ -21,6 +21,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
+import static com.chickeneater.tictactoe.core.android.LocationAndDiscoverabilityUtils.dismissSafely;
 import static com.chickeneater.tictactoe.core.android.LocationAndDiscoverabilityUtils.isLocationPermissionGranted;
 import static com.chickeneater.tictactoe.core.android.LocationAndDiscoverabilityUtils.locationPermissionRejectedDialog;
 import static com.chickeneater.tictactoe.core.android.LocationAndDiscoverabilityUtils.requestLocationPermissionIfNeed;
@@ -36,6 +37,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
     private Toolbar mToolbar;
     private MenuItem mScanButton;
 
+    private AlertDialog mDialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +97,22 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
         });
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //noinspection ConstantConditions
+        if (mViewModel.getLocationPermissionDenied().getValue()) {
+            dismissSafely(mDialog);
+            mDialog = locationPermissionRejectedDialog(this);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dismissSafely(mDialog);
     }
 
     private void connectionFailedDialog() {
@@ -162,7 +180,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
         if (isLocationPermissionGranted(requestCode, grantResults)) {
             mViewModel.restartDiscovery(this);
         } else {
-            locationPermissionRejectedDialog(this);
+            mDialog = locationPermissionRejectedDialog(this);
         }
     }
 }
