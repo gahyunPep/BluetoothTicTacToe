@@ -253,10 +253,12 @@ public class GameActivity extends AppCompatActivity {
 
         switch (winner) {
             case GameBoard.CROSS:
-                winnerDialog(getString(R.string.game_player_1_won));
+                String player1Name = player1TextView.getText().toString();
+                winnerDialog(getString(R.string.winner_message,  player1Name));
                 break;
             case GameBoard.NOUGHT:
-                winnerDialog(getString(R.string.game_player_2_won));
+                String player2Name = player2TextView.getText().toString();
+                winnerDialog(getString(R.string.winner_message, player2Name));
                 break;
             case GameViewModel.DRAW:
                 winnerDialog(getString(R.string.game_draw));

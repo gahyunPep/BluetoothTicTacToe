@@ -37,6 +37,9 @@ public class HomeScreenActivity extends AppCompatActivity {
         final Stats stats = new Stats(this);
 
 
+        Stats stats = new Stats(this);
+        nameInput.setText(stats.getName());
+
         hostButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
