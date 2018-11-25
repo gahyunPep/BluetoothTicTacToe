@@ -54,6 +54,10 @@ public class GameActivity extends AppCompatActivity {
     private TextView waitingTextView;
     private ProgressBar waitingProgressBar;
 
+    private TextView player1TextView;
+    private TextView player2TextView;
+
+
     private int mGameMode;
     private boolean mIsHost;
 
@@ -92,6 +96,21 @@ public class GameActivity extends AppCompatActivity {
         player2Score = findViewById(R.id.player2score);
         waitingTextView = findViewById(R.id.waitingTextView);
         waitingProgressBar = findViewById(R.id.waitingProgressBar);
+        player1TextView = findViewById(R.id.txtView_Player1);
+        player2TextView = findViewById(R.id.txtView_Player2);
+
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("Player", MODE_PRIVATE);
+        String playerName = sharedPref.getString("Name", "");
+        if (mGameMode == MULTIPLAYER) {
+            if (mIsHost) {
+                player1TextView.setText(playerName);
+            } else {
+                player2TextView.setText(playerName);
+            }
+        } else if (mGameMode == SINGLEPLAYER) {
+            player1TextView.setText(playerName);
+        }
+
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -153,6 +172,20 @@ public class GameActivity extends AppCompatActivity {
                     waitingTextView.setVisibility(View.INVISIBLE);
                     waitingProgressBar.setVisibility(View.INVISIBLE);
                 }
+            }
+        });
+
+        gameViewModel.getOpponentName().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                if (mGameMode == MULTIPLAYER) {
+                    if (mIsHost) {
+                        player2TextView.setText(s);
+                    } else {
+                        player1TextView.setText(s);
+                    }
+                }
+
             }
         });
 

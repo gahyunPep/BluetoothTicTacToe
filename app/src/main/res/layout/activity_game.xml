@@ -118,7 +118,7 @@
         tools:textColor="@android:color/black" />
 
     <TextView
-        android:id="@+id/txtView_Player12"
+        android:id="@+id/txtView_Player2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -173,7 +173,7 @@
         android:textSize="50sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/player2moveindicator"
-        app:layout_constraintTop_toBottomOf="@+id/txtView_Player12" />
+        app:layout_constraintTop_toBottomOf="@+id/txtView_Player2" />
 
     <Button
         android:id="@+id/player2moveindicator"

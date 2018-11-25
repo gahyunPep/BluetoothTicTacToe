@@ -26,6 +26,7 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
     private MutableLiveData<Integer> player1Score = new MutableLiveData<>();
     private MutableLiveData<Integer> player2Score = new MutableLiveData<>();
     private MutableLiveData<Boolean> displayWaitingProgressBar = new MutableLiveData<>();
+    private MutableLiveData<String> opponentName = new MutableLiveData<>();
     private int playerOneWin = 0, playerTwoWin = 0;
 
 
@@ -69,9 +70,13 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
         return displayWaitingProgressBar;
     }
 
+    public LiveData<String> getOpponentName() {
+        return opponentName;
+    }
+
     @Override
     public void onGameStarted(String playerName) {
-        //TODO @Nithil show oponent name here
+        opponentName.setValue(playerName);
         displayWaitingProgressBar.setValue(false);
     }
 
