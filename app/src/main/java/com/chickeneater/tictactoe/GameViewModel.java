@@ -33,6 +33,7 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
        startGame(gameMode, isHost);
        player1Score.setValue(playerOneWin);
        player2Score.setValue(playerTwoWin);
+       locationPermissionDenied.setValue(false);
     }
 
     @Override

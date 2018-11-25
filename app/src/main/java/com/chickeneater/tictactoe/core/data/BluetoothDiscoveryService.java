@@ -63,7 +63,6 @@ public class BluetoothDiscoveryService {
             filter.addAction(BluetoothDevice.ACTION_FOUND);
             filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
             filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-
             context.registerReceiver(new BluetoothDiscoveryBroadcastReceiver(listener), filter);
 
 

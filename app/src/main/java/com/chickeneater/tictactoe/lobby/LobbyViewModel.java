@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.jar.Attributes;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -44,6 +43,7 @@ public class LobbyViewModel extends ViewModel implements BluetoothDiscoveryServi
     private LobbyViewModel(Context context) {
         mDiscoveryService = new BluetoothDiscoveryService();
         mDiscoveryService.discoverDevices(context, this);
+        locationPermissionDenied.setValue(false);
     }
 
     public LiveData<Boolean> getIsDiscovering() {
@@ -128,6 +128,10 @@ public class LobbyViewModel extends ViewModel implements BluetoothDiscoveryServi
     @Override
     public void onConnectionFailed() {
         mDeviceConnectionFailed.setValue(new Event<Void>(null));
+    }
+
+    public void setLocationPermissionDenied(boolean denied) {
+        locationPermissionDenied.setValue(denied);
     }
 
     public LiveData<Boolean> getLocationPermissionDenied() {

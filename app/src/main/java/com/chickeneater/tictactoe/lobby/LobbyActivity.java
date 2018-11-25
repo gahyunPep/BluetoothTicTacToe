@@ -49,7 +49,6 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
         setupList();
         setupToolbar();
 
-
         if (savedInstanceState == null) {
             requestLocationPermissionIfNeed(this);
         }
@@ -96,6 +95,12 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
             }
         });
 
+        mViewModel.getLocationPermissionDenied().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                mDialog = locationPermissionRejectedDialog(LobbyActivity.this);
+            }
+        });
 
     }
 
@@ -180,6 +185,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
         if (isLocationPermissionGranted(requestCode, grantResults)) {
             mViewModel.restartDiscovery(this);
         } else {
+            mViewModel.setLocationPermissionDenied(true);
             mDialog = locationPermissionRejectedDialog(this);
         }
     }
