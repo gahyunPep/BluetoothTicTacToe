@@ -235,8 +235,6 @@ public class TickTackBluetoothService implements OnBluetoothConnectionServiceLis
 
     public void write(String command) {
         if (getState() != STATE_CONNECTED) {
-            //TODO Show Error
-            //Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
             return;
         }
 
