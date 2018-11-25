@@ -168,9 +168,19 @@ public class GameActivity extends AppCompatActivity {
                 if (aBoolean) {
                     waitingTextView.setVisibility(View.VISIBLE);
                     waitingProgressBar.setVisibility(View.VISIBLE);
+                    for (int i = 0; i < 3; i++) {
+                        for (int j = 0; j < 3; j++) {
+                            gridImageViews[i][j].setVisibility(View.INVISIBLE);
+                        }
+                    }
                 } else {
                     waitingTextView.setVisibility(View.INVISIBLE);
                     waitingProgressBar.setVisibility(View.INVISIBLE);
+                    for (int i = 0; i < 3; i++) {
+                        for (int j = 0; j < 3; j++) {
+                            gridImageViews[i][j].setVisibility(View.VISIBLE);
+                        }
+                    }
                 }
             }
         });
