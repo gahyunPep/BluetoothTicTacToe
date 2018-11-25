@@ -1,4 +1,4 @@
-package com.chickeneater.tictactoe;
+package com.chickeneater.tictactoe.stats;
 
 import android.content.Context;
 import android.content.SharedPreferences;

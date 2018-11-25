@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.chickeneater.tictactoe.GameActivity;
+import com.chickeneater.tictactoe.game.ui.GameActivity;
 import com.chickeneater.tictactoe.R;
 import com.chickeneater.tictactoe.core.ui.EventObserver;
 

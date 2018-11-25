@@ -1,4 +1,4 @@
-package com.chickeneater.tictactoe.game;
+package com.chickeneater.tictactoe.game.logic;
 
 import com.chickeneater.tictactoe.core.data.OnBluetoothConnectionServiceListener;
 import com.chickeneater.tictactoe.core.data.OnMessageReceivedListener;
@@ -6,7 +6,7 @@ import com.chickeneater.tictactoe.core.data.TickTackBluetoothService;
 
 import androidx.annotation.NonNull;
 
-import static com.chickeneater.tictactoe.game.GameBoard.EMPTY;
+import static com.chickeneater.tictactoe.game.logic.GameBoard.EMPTY;
 
 /**
  * Created by romanlee on 11/17/18.

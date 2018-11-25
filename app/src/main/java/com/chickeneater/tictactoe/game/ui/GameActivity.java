@@ -1,7 +1,6 @@
-package com.chickeneater.tictactoe;
+package com.chickeneater.tictactoe.game.ui;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,9 +12,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.chickeneater.tictactoe.R;
+import com.chickeneater.tictactoe.stats.Stats;
 import com.chickeneater.tictactoe.core.ui.EventObserver;
-import com.chickeneater.tictactoe.game.GameBoard;
-import com.chickeneater.tictactoe.lobby.LobbyActivity;
+import com.chickeneater.tictactoe.game.logic.GameBoard;
 
 import java.util.List;
 

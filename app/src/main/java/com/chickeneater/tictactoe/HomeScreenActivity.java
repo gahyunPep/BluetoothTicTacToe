@@ -1,16 +1,17 @@
 package com.chickeneater.tictactoe;
 
-import android.content.Context;
 import android.content.Intent;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.chickeneater.tictactoe.game.ui.GameActivity;
 import com.chickeneater.tictactoe.lobby.LobbyActivity;
+import com.chickeneater.tictactoe.stats.Stats;
+import com.chickeneater.tictactoe.stats.StatsActivity;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class HomeScreenActivity extends AppCompatActivity {

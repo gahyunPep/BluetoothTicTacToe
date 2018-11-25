@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".StatsActivity"
+    tools:context=".stats.StatsActivity"
     android:background="@drawable/img_background_pattern"
     tools:layout_editor_absoluteX="16dp"
     tools:layout_editor_absoluteY="16dp">

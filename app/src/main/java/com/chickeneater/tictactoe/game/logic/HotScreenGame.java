@@ -1,4 +1,4 @@
-package com.chickeneater.tictactoe.game;
+package com.chickeneater.tictactoe.game.logic;
 
 import androidx.annotation.NonNull;
 

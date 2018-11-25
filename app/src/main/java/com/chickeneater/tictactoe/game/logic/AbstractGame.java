@@ -1,8 +1,8 @@
-package com.chickeneater.tictactoe.game;
+package com.chickeneater.tictactoe.game.logic;
 
 import androidx.annotation.NonNull;
 
-import static com.chickeneater.tictactoe.game.GameBoard.EMPTY;
+import static com.chickeneater.tictactoe.game.logic.GameBoard.EMPTY;
 
 /**
  * Created by romanlee on 11/17/18.

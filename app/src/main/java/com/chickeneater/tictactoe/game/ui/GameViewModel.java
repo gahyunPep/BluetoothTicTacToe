@@ -1,11 +1,11 @@
-package com.chickeneater.tictactoe;
+package com.chickeneater.tictactoe.game.ui;
 
 import com.chickeneater.tictactoe.core.ui.Event;
-import com.chickeneater.tictactoe.game.Game;
-import com.chickeneater.tictactoe.game.GameBoard;
-import com.chickeneater.tictactoe.game.HotScreenGame;
-import com.chickeneater.tictactoe.game.MultiPlayerGame;
-import com.chickeneater.tictactoe.game.OnGameEventListener;
+import com.chickeneater.tictactoe.game.logic.Game;
+import com.chickeneater.tictactoe.game.logic.GameBoard;
+import com.chickeneater.tictactoe.game.logic.HotScreenGame;
+import com.chickeneater.tictactoe.game.logic.MultiPlayerGame;
+import com.chickeneater.tictactoe.game.logic.OnGameEventListener;
 
 import java.util.ArrayList;
 import java.util.List;

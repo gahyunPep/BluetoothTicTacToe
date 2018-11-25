@@ -1,9 +1,9 @@
-package com.chickeneater.tictactoe;
+package com.chickeneater.tictactoe.stats;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.TextView;
+
+import com.chickeneater.tictactoe.R;
 
 import androidx.appcompat.app.AppCompatActivity;
 

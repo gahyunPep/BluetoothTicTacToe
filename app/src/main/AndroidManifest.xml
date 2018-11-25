@@ -14,7 +14,7 @@
         android:roundIcon="@mipmap/tictactoe_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".GameActivity"></activity>
+        <activity android:name=".game.ui.GameActivity"></activity>
         <activity android:name=".HomeScreenActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,7 +25,7 @@
 
         <activity android:name=".lobby.LobbyActivity">
         </activity>
-        <activity android:name=".StatsActivity"></activity>
+        <activity android:name=".stats.StatsActivity"></activity>
 
         <meta-data
             android:name="preloaded_fonts"
