@@ -20,6 +20,7 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
     public static final int DRAW = 3;
     private MutableLiveData<List<List<Integer>>> cellsListoflists = new MutableLiveData<>();
     //Use Event<Integer>
+    private MutableLiveData<Boolean> locationPermissionDenied = new MutableLiveData<>();
     private MutableLiveData<Integer> winnerState = new MutableLiveData<>();
     private MutableLiveData<Integer> player1Score = new MutableLiveData<>();
     private MutableLiveData<Integer> player2Score = new MutableLiveData<>();
@@ -38,6 +39,12 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
             ((MultiPlayerGame) mStrategy).clean();
         }
     }
+
+    public void setLocationPermissionDenied(boolean denied){
+        locationPermissionDenied.setValue(denied);
+    }
+
+    public MutableLiveData<Boolean> getLocationPermissionDenied() {return locationPermissionDenied;}
 
     public MutableLiveData<Integer> getPlayer1Score() {
         return player1Score;
@@ -139,4 +146,5 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
             return (T) new GameViewModel(mGameMode, mIsHost);
         }
     }
+
 }

@@ -47,7 +47,6 @@ public class LocationAndDiscoverabilityUtils {
         return false;
     }
 
-    //TODO @Gahyun Consider screen rotation and understand savedInstanceState
     //TODO Rokanank doesn't like passing activity to requestLocationPermissionIfNeed
     public static void locationPermissionRejectedDialog(final Activity activity){
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
