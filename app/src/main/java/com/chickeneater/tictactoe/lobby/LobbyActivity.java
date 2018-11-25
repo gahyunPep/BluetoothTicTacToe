@@ -83,7 +83,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
             public void onEventHappened(LobbyViewModel.Device value) {
                 mConnectTxt.setVisibility(View.INVISIBLE);
                 mScanProgressBar.setVisibility(View.INVISIBLE);
-                GameActivity.startMultiPlayerPlayerGame(LobbyActivity.this, value.isHost);
+                GameActivity.startMultiPlayerPlayerGame(LobbyActivity.this, value.isHost, value.name);
             }
         });
 

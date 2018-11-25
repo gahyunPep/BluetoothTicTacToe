@@ -1,5 +1,6 @@
 package com.chickeneater.tictactoe;
 
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import com.chickeneater.tictactoe.game.GameBoard;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -36,6 +38,7 @@ public class GameActivity extends AppCompatActivity {
     public static final int SINGLEPLAYER = 2;
 
     public static final String IS_HOST = "is_host";
+    public static final String PLAYER_NAME = "player_name";
 
     private GameViewModel gameViewModel;
 
@@ -63,10 +66,15 @@ public class GameActivity extends AppCompatActivity {
 
     private AlertDialog mDialog = null;
 
-    public static void startMultiPlayerPlayerGame(Context packageContext, boolean asHost) {
+    public static void startMultiPlayerPlayerGame(Context packageContext, boolean asHost){
+        startMultiPlayerPlayerGame(packageContext, asHost, null);
+    }
+
+    public static void startMultiPlayerPlayerGame(Context packageContext, boolean asHost, @Nullable String name) {
         Intent intent = new Intent(packageContext, GameActivity.class);
         intent.putExtra(GameActivity.GAME_MODE, GameActivity.MULTIPLAYER);
         intent.putExtra(GameActivity.IS_HOST, asHost);
+        intent.putExtra(GameActivity.PLAYER_NAME, name);
         packageContext.startActivity(intent);
     }
 
@@ -111,7 +119,6 @@ public class GameActivity extends AppCompatActivity {
             player1TextView.setText(playerName);
         }
 
-
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 gridImageViews[i][j] = findViewById(gridImageIds[i][j]);
@@ -123,6 +130,18 @@ public class GameActivity extends AppCompatActivity {
                         onCellClicked(x, y);
                     }
                 });
+            }
+        }
+
+
+        if (mGameMode == MULTIPLAYER) {
+            String name = getIntent().getStringExtra(GameActivity.PLAYER_NAME);
+            if (name != null) {
+                if (mIsHost) {
+                    player2TextView.setText(name);
+                } else {
+                    player1TextView.setText(name);
+                }
             }
         }
 
@@ -170,7 +189,7 @@ public class GameActivity extends AppCompatActivity {
                     waitingProgressBar.setVisibility(View.VISIBLE);
                     for (int i = 0; i < 3; i++) {
                         for (int j = 0; j < 3; j++) {
-                            gridImageViews[i][j].setVisibility(View.INVISIBLE);
+                            gridImageViews[i][j].setVisibility(View.GONE);
                         }
                     }
                 } else {

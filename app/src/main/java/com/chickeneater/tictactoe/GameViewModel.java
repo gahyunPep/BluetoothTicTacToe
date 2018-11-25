@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -31,10 +32,10 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
 
 
     public GameViewModel(int gameMode, boolean isHost) {
-       startGame(gameMode, isHost);
-       player1Score.setValue(playerOneWin);
-       player2Score.setValue(playerTwoWin);
-       locationPermissionDenied.setValue(false);
+        startGame(gameMode, isHost);
+        player1Score.setValue(playerOneWin);
+        player2Score.setValue(playerTwoWin);
+        locationPermissionDenied.setValue(false);
     }
 
     @Override
@@ -44,17 +45,19 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
         }
     }
 
-    public void setLocationPermissionDenied(boolean denied){
+    public void setLocationPermissionDenied(boolean denied) {
         locationPermissionDenied.setValue(denied);
     }
 
-    public MutableLiveData<Boolean> getLocationPermissionDenied() {return locationPermissionDenied;}
+    public LiveData<Boolean> getLocationPermissionDenied() {
+        return locationPermissionDenied;
+    }
 
-    public MutableLiveData<Integer> getPlayer1Score() {
+    public LiveData<Integer> getPlayer1Score() {
         return player1Score;
     }
 
-    public MutableLiveData<Integer> getPlayer2Score() {
+    public LiveData<Integer> getPlayer2Score() {
         return player2Score;
     }
 
@@ -75,8 +78,10 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
     }
 
     @Override
-    public void onGameStarted(String playerName) {
-        opponentName.setValue(playerName);
+    public void onGameStarted(@Nullable String playerName) {
+        if (playerName != null) {
+            opponentName.setValue(playerName);
+        }
         displayWaitingProgressBar.setValue(false);
     }
 
@@ -96,7 +101,7 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
     @Override
     public void onPlayerWon(int winner) {
 
-        switch (winner){
+        switch (winner) {
             case GameBoard.CROSS:
                 player1Score.setValue(++playerOneWin);
                 break;
@@ -126,11 +131,11 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
     public void startGame(int gameMode, boolean isHost) {
 
         if (gameMode == GameActivity.SINGLEPLAYER) {
-            mStrategy = new HotScreenGame("Player 2",this);
             displayWaitingProgressBar.setValue(false);
+            mStrategy = new HotScreenGame("Player 2", this);
         } else if (gameMode == GameActivity.MULTIPLAYER) {
-            mStrategy = new MultiPlayerGame(this, isHost);
             displayWaitingProgressBar.setValue(true);
+            mStrategy = new MultiPlayerGame(this, isHost);
         }
         List<List<Integer>> initialBoard = new ArrayList<>();
 

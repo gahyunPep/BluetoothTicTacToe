@@ -26,6 +26,8 @@ public class MultiPlayerGame extends AbstractGame implements OnMessageReceivedLi
         if (isHost) {
             mBluetoothService.start();
             mBluetoothService.addConnectionListener(this);
+        } else {
+            mOnGameEventListener.onGameStarted(null);
         }
     }
 

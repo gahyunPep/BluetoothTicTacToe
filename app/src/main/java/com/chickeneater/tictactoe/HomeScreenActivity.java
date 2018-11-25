@@ -38,11 +38,7 @@ public class HomeScreenActivity extends AppCompatActivity {
         hostButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String name = String.valueOf(nameInput.getText());
-                SharedPreferences prefs = v.getContext().getSharedPreferences("Player", Context.MODE_PRIVATE);
-                SharedPreferences.Editor prefsEditor = prefs.edit();
-                prefsEditor.putString(NAME, name);
-                prefsEditor.apply();
+                saveNameToSharedPreferences(v);
                 GameActivity.startMultiPlayerPlayerGame(v.getContext(), true);
             }
         });
@@ -64,8 +60,17 @@ public class HomeScreenActivity extends AppCompatActivity {
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                saveNameToSharedPreferences(v);
                 startActivity(new Intent(HomeScreenActivity.this, LobbyActivity.class));
             }
         });
+    }
+
+    private void saveNameToSharedPreferences(View v) {
+        String name = String.valueOf(nameInput.getText());
+        SharedPreferences prefs = v.getContext().getSharedPreferences("Player", Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        prefsEditor.putString(NAME, name);
+        prefsEditor.apply();
     }
 }

@@ -1,7 +1,9 @@
 package com.chickeneater.tictactoe.game;
 
+import androidx.annotation.Nullable;
+
 public interface OnGameEventListener {
-    void onGameStarted(String playerName);
+    void onGameStarted(@Nullable String playerName);
 
     void onMoveMade(); //call this after each move
 
