@@ -84,6 +84,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
                 mConnectTxt.setVisibility(View.INVISIBLE);
                 mScanProgressBar.setVisibility(View.INVISIBLE);
                 GameActivity.startMultiPlayerPlayerGame(LobbyActivity.this, value.isHost, value.name);
+                LobbyActivity.this.finish();
             }
         });
 
@@ -114,6 +115,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
             dismissSafely(mDialog);
             mDialog = locationPermissionRejectedDialog(this);
         }
+
     }
 
     @Override
