@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.chickeneater.tictactoe.game.Game;
 import com.chickeneater.tictactoe.game.GameBoard;
 
 import java.util.List;
@@ -142,13 +141,13 @@ public class GameActivity extends AppCompatActivity {
         //TODO @Nithil write normal strings and extract to string resources
         switch (winner) {
             case GameBoard.CROSS:
-                winnerDialog("Player 1 Won");
+                winnerDialog(getString(R.string.game_player_1_won));
                 break;
             case GameBoard.NOUGHT:
-                winnerDialog("Player 2 Won");
+                winnerDialog(getString(R.string.game_player_2_won));
                 break;
             case GameViewModel.DRAW:
-                winnerDialog("It is a draw");
+                winnerDialog(getString(R.string.game_draw));
                 break;
         }
         saveStats(winner);
@@ -220,18 +219,18 @@ public class GameActivity extends AppCompatActivity {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 this);
         //TODO @Nithil write normal strings and extract to string resources
-        alertDialogBuilder.setTitle("Result");
+        alertDialogBuilder.setTitle(getString(R.string.result));
 
         alertDialogBuilder
                 .setMessage(winnerMessage)
                 .setCancelable(false)
                 //TODO @Nithil remove it
-                .setPositiveButton("Play Again", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.play_again), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         gameViewModel.startGame(mGameMode, mIsHost);
                     }
                 })
-                .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.exit), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         GameActivity.this.finish();
                     }

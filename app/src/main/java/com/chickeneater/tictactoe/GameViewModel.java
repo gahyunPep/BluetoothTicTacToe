@@ -105,6 +105,7 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
 
     public void startGame(int gameMode, boolean isHost) {
         //TODO @Nithil start connection loader (live data)
+
         if (gameMode == GameActivity.SINGLEPLAYER) {
             mStrategy = new HotScreenGame("Player 2",this);
         } else if (gameMode == GameActivity.MULTIPLAYER) {
