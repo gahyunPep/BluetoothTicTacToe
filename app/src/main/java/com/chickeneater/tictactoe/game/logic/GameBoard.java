@@ -47,7 +47,7 @@ public class GameBoard {
 
             int subDiagonal = checkSubDiagonal();
             if (subDiagonal != EMPTY) {
-                return mainDiagonal;
+                return subDiagonal;
             }
         }
 
