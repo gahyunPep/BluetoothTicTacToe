@@ -11,14 +11,14 @@ import java.io.IOException;
  * with a device. It runs straight through; the connection either
  * succeeds or fails.
  */
-class ConnectThread extends Thread {
-    private static final String TAG = ConnectThread.class.getName();
+class ConnectingThread extends Thread {
+    private static final String TAG = ConnectingThread.class.getName();
 
     private final TickTackBluetoothService mService;
     private final BluetoothSocket mmSocket;
     private final BluetoothDevice mmDevice;
 
-    public ConnectThread(TickTackBluetoothService service, BluetoothDevice device) {
+    public ConnectingThread(TickTackBluetoothService service, BluetoothDevice device) {
         mService = service;
         mmDevice = device;
         BluetoothSocket tmp = null;

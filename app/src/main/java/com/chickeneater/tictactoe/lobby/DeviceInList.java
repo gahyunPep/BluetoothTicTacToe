@@ -17,7 +17,6 @@ public class DeviceInList implements Comparable<DeviceInList> {
     private final String mName;
     @NonNull
     private final String mAddress;
-    @NonNull
     private boolean paired = false;
 
     public DeviceInList(@Nullable String name, @Nullable String address) {
@@ -41,10 +40,9 @@ public class DeviceInList implements Comparable<DeviceInList> {
         return mAddress;
     }
 
-    @NonNull
     public boolean getPaired() {return paired;}
 
-    public void setPaired(@NonNull boolean paired) {
+    public void setPaired(boolean paired) {
         this.paired = paired;
     }
 

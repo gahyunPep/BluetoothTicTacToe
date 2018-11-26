@@ -37,7 +37,6 @@ public class LobbyViewModel extends ViewModel implements BluetoothDiscoveryServi
     private MutableLiveData<Event<Device>> mDeviceConnectedEvent = new MutableLiveData<>();
     private MutableLiveData<Event<Void>> mDeviceConnectionFailed = new MutableLiveData<>();
 
-    //TODO @Gahyun finish live data
     private MutableLiveData<Boolean> locationPermissionDenied = new MutableLiveData<>();
 
     private LobbyViewModel(Context context) {

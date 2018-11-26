@@ -4,7 +4,6 @@ package com.chickeneater.tictactoe.game.ui;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -59,14 +58,14 @@ public class GameActivity extends AppCompatActivity {
     private TextView waitingTextView;
     private ProgressBar waitingProgressBar;
 
-    private TextView player1TextView;
-    private TextView player2TextView;
+    private TextView player1NameTextView;
+    private TextView player2NameTextView;
 
 
     private int mGameMode;
     private boolean mIsHost;
 
-    private AlertDialog mDialog = null;
+    private AlertDialog mLocationPermissionDialog = null;
 
     public static void startMultiPlayerPlayerGame(Context packageContext, boolean asHost){
         startMultiPlayerPlayerGame(packageContext, asHost, null);
@@ -106,19 +105,23 @@ public class GameActivity extends AppCompatActivity {
         player2Score = findViewById(R.id.player2score);
         waitingTextView = findViewById(R.id.waitingTextView);
         waitingProgressBar = findViewById(R.id.waitingProgressBar);
-        player1TextView = findViewById(R.id.txtView_Player1);
-        player2TextView = findViewById(R.id.txtView_Player2);
+        player1NameTextView = findViewById(R.id.txtView_Player1);
+        player2NameTextView = findViewById(R.id.txtView_Player2);
 
-        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("Player", MODE_PRIVATE);
-        String playerName = sharedPref.getString("Name", "");
+        Stats stats = new Stats(this);
+        String playerName = stats.getName();
         if (mGameMode == MULTIPLAYER) {
+            String otherPlayerName = getIntent().getStringExtra(GameActivity.PLAYER_NAME);
+            otherPlayerName = otherPlayerName == null ? "" : otherPlayerName;
             if (mIsHost) {
-                player1TextView.setText(playerName);
+                player1NameTextView.setText(playerName);
+                player2NameTextView.setText(otherPlayerName);
             } else {
-                player2TextView.setText(playerName);
+                player2NameTextView.setText(playerName);
+                player1NameTextView.setText(otherPlayerName);
             }
         } else if (mGameMode == SINGLEPLAYER) {
-            player1TextView.setText(playerName);
+            player1NameTextView.setText(playerName);
         }
 
         for (int i = 0; i < 3; i++) {
@@ -132,18 +135,6 @@ public class GameActivity extends AppCompatActivity {
                         onCellClicked(x, y);
                     }
                 });
-            }
-        }
-
-
-        if (mGameMode == MULTIPLAYER) {
-            String name = getIntent().getStringExtra(GameActivity.PLAYER_NAME);
-            if (name != null) {
-                if (mIsHost) {
-                    player2TextView.setText(name);
-                } else {
-                    player1TextView.setText(name);
-                }
             }
         }
 
@@ -180,7 +171,7 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public void onChanged(Boolean aBoolean) {
                 if(aBoolean){
-                    mDialog = locationPermissionRejectedDialog(GameActivity.this);
+                    mLocationPermissionDialog = locationPermissionRejectedDialog(GameActivity.this);
                 }
             }
         });
@@ -213,9 +204,9 @@ public class GameActivity extends AppCompatActivity {
             public void onChanged(String s) {
                 if (mGameMode == MULTIPLAYER) {
                     if (mIsHost) {
-                        player2TextView.setText(s);
+                        player2NameTextView.setText(s);
                     } else {
-                        player1TextView.setText(s);
+                        player1NameTextView.setText(s);
                     }
                 }
 
@@ -229,15 +220,15 @@ public class GameActivity extends AppCompatActivity {
         super.onResume();
         //noinspection ConstantConditions
         if (gameViewModel.getLocationPermissionDenied().getValue()) {
-            dismissSafely(mDialog);
-            mDialog = locationPermissionRejectedDialog(this);
+            dismissSafely(mLocationPermissionDialog);
+            mLocationPermissionDialog = locationPermissionRejectedDialog(this);
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        dismissSafely(mDialog);
+        dismissSafely(mLocationPermissionDialog);
     }
 
     @Override
@@ -254,11 +245,11 @@ public class GameActivity extends AppCompatActivity {
 
         switch (winner) {
             case GameBoard.CROSS:
-                String player1Name = player1TextView.getText().toString();
+                String player1Name = player1NameTextView.getText().toString();
                 winnerDialog(getString(R.string.winner_message,  player1Name));
                 break;
             case GameBoard.NOUGHT:
-                String player2Name = player2TextView.getText().toString();
+                String player2Name = player2NameTextView.getText().toString();
                 winnerDialog(getString(R.string.winner_message, player2Name));
                 break;
             case GameBoard.DRAW:

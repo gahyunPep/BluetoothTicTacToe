@@ -39,7 +39,7 @@ public class TickTackBluetoothService implements OnBluetoothConnectionServiceLis
     @Nullable
     private AcceptThread mSecureAcceptThread;
     @Nullable
-    private ConnectThread mConnectThread;
+    private ConnectingThread mConnectingThread;
     @Nullable
     private ConnectedThread mConnectedThread;
 
@@ -81,7 +81,7 @@ public class TickTackBluetoothService implements OnBluetoothConnectionServiceLis
     }
 
     void resetConnectThread() {
-        mConnectThread = null;
+        mConnectingThread = null;
     }
 
     /**
@@ -92,9 +92,9 @@ public class TickTackBluetoothService implements OnBluetoothConnectionServiceLis
         Log.d(TAG, "start");
 
         // Cancel any thread attempting to make a connection
-        if (mConnectThread != null) {
-            mConnectThread.cancel();
-            mConnectThread = null;
+        if (mConnectingThread != null) {
+            mConnectingThread.cancel();
+            mConnectingThread = null;
         }
 
         // Cancel any thread currently running a connection
@@ -125,9 +125,9 @@ public class TickTackBluetoothService implements OnBluetoothConnectionServiceLis
 
         // Cancel any thread attempting to make a connection
         if (mState == STATE_CONNECTING) {
-            if (mConnectThread != null) {
-                mConnectThread.cancel();
-                mConnectThread = null;
+            if (mConnectingThread != null) {
+                mConnectingThread.cancel();
+                mConnectingThread = null;
             }
         }
 
@@ -138,8 +138,8 @@ public class TickTackBluetoothService implements OnBluetoothConnectionServiceLis
         }
 
         // Start the thread to connect with the given device
-        mConnectThread = new ConnectThread(this, device);
-        mConnectThread.start();
+        mConnectingThread = new ConnectingThread(this, device);
+        mConnectingThread.start();
     }
 
     /**
@@ -153,9 +153,9 @@ public class TickTackBluetoothService implements OnBluetoothConnectionServiceLis
         Log.d(TAG, "connected");
 
         // Cancel the thread that completed the connection
-        if (mConnectThread != null) {
-            mConnectThread.cancel();
-            mConnectThread = null;
+        if (mConnectingThread != null) {
+            mConnectingThread.cancel();
+            mConnectingThread = null;
         }
 
         // Cancel any thread currently running a connection
@@ -196,9 +196,9 @@ public class TickTackBluetoothService implements OnBluetoothConnectionServiceLis
     public synchronized void stop() {
         Log.d(TAG, "stop");
 
-        if (mConnectThread != null) {
-            mConnectThread.cancel();
-            mConnectThread = null;
+        if (mConnectingThread != null) {
+            mConnectingThread.cancel();
+            mConnectingThread = null;
         }
 
         if (mConnectedThread != null) {

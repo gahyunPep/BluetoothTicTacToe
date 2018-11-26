@@ -37,7 +37,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
     private Toolbar mToolbar;
     private MenuItem mScanButton;
 
-    private AlertDialog mDialog = null;
+    private AlertDialog mLocationPermissionDialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +100,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
             @Override
             public void onChanged(Boolean aBoolean) {
                 if(aBoolean){
-                    mDialog = locationPermissionRejectedDialog(LobbyActivity.this);
+                    mLocationPermissionDialog = locationPermissionRejectedDialog(LobbyActivity.this);
                 }
             }
         });
@@ -112,8 +112,8 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
         super.onResume();
         //noinspection ConstantConditions
         if (mViewModel.getLocationPermissionDenied().getValue()) {
-            dismissSafely(mDialog);
-            mDialog = locationPermissionRejectedDialog(this);
+            dismissSafely(mLocationPermissionDialog);
+            mLocationPermissionDialog = locationPermissionRejectedDialog(this);
         }
 
     }
@@ -121,7 +121,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
     @Override
     protected void onPause() {
         super.onPause();
-        dismissSafely(mDialog);
+        dismissSafely(mLocationPermissionDialog);
     }
 
     private void connectionFailedDialog() {
@@ -191,7 +191,7 @@ public class LobbyActivity extends AppCompatActivity implements DevicesRecyclerV
             mViewModel.setLocationPermissionDenied(false);
         } else {
             mViewModel.setLocationPermissionDenied(true);
-            mDialog = locationPermissionRejectedDialog(this);
+            mLocationPermissionDialog = locationPermissionRejectedDialog(this);
         }
     }
 }
