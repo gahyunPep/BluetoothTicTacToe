@@ -52,6 +52,7 @@ public class HomeScreenActivity extends AppCompatActivity {
         deviceMultiplayerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                stats.setName(String.valueOf(nameInput.getText()));
                 GameActivity.startSinglePlayerPlayerGame(v.getContext());
             }
         });
