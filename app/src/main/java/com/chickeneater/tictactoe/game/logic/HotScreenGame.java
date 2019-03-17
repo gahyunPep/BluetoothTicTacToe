@@ -8,7 +8,6 @@ public class HotScreenGame extends AbstractGame {
         onGameEventListener.onGameStarted(playerName);
     }
 
-    @Override
     public boolean canMakeMove() {
         return true;
     }

@@ -58,7 +58,6 @@ public class MultiPlayerGame extends AbstractGame implements OnMessageReceivedLi
         }
     }
 
-    @Override
     public boolean canMakeMove() {
         return mCanMakeMove;
     }

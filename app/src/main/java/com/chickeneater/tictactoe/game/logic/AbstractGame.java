@@ -19,6 +19,8 @@ public abstract class AbstractGame implements Game {
         mOnGameEventListener = onGameEventListener;
     }
 
+    protected abstract boolean canMakeMove();
+
     @Override
     public boolean isCurrentPlayerCross() {
         return mIsCross;

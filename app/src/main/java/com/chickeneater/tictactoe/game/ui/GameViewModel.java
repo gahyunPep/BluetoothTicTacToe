@@ -118,9 +118,7 @@ public class GameViewModel extends ViewModel implements OnGameEventListener {
     }
 
     public void makeMove(int x, int y) {
-        if (mStrategy.canMakeMove()) {
-            mStrategy.makeMove(x, y);
-        }
+        mStrategy.makeMove(x, y);
     }
 
     public boolean isCurrentPlayerCross() {
